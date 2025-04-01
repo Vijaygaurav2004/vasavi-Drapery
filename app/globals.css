@@ -1,0 +1,451 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Jost:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 30 30% 99%;
+    --foreground: 24 10% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 24 10% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 24 10% 10%;
+    --primary: 358 68% 85%; /* Soft rose gold */
+    --primary-foreground: 358 60% 25%;
+    --secondary: 32 75% 94%; /* Soft gold */
+    --secondary-foreground: 32 40% 30%;
+    --muted: 30 20% 96%;
+    --muted-foreground: 24 5% 40%;
+    --accent: 160 30% 92%; /* Soft teal */
+    --accent-foreground: 160 40% 25%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 60 9.1% 97.8%;
+    --border: 20 15% 90%;
+    --input: 20 15% 90%;
+    --ring: 358 68% 85%;
+    --radius: 0;
+  }
+
+  .dark {
+    --background: 24 10% 5%;
+    --foreground: 30 30% 98%;
+    --card: 24 10% 8%;
+    --card-foreground: 30 30% 98%;
+    --popover: 24 10% 8%;
+    --popover-foreground: 30 30% 98%;
+    --primary: 358 68% 40%;
+    --primary-foreground: 358 68% 95%;
+    --secondary: 32 75% 40%;
+    --secondary-foreground: 32 75% 95%;
+    --muted: 24 10% 12%;
+    --muted-foreground: 24 5% 70%;
+    --accent: 160 30% 25%;
+    --accent-foreground: 160 30% 95%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 60 9.1% 97.8%;
+    --border: 24 10% 20%;
+    --input: 24 10% 20%;
+    --ring: 358 68% 40%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  html, body {
+    font-family: 'Jost', sans-serif;
+    @apply tracking-wide;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 500;
+    @apply tracking-wider;
+  }
+  
+  .elegant-heading {
+    font-family: 'Cormorant Garamond', serif;
+    @apply tracking-wider leading-tight;
+  }
+  
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Enhanced professional components */
+@layer components {
+  .container {
+    @apply px-4 md:px-8 mx-auto max-w-7xl;
+  }
+  
+  .section-title {
+    @apply text-3xl md:text-4xl uppercase tracking-widest font-light mb-6 elegant-heading;
+    letter-spacing: 0.25em;
+  }
+  
+  .section-subtitle {
+    @apply text-foreground/70 mt-6 max-w-2xl mx-auto leading-relaxed text-base md:text-lg;
+  }
+  
+  .section-divider {
+    @apply w-16 h-px mx-auto bg-primary mt-6 relative;
+  }
+  
+  .section-divider:before, .section-divider:after {
+    content: '';
+    @apply absolute top-0 bg-primary/30 h-px;
+    width: 40px;
+  }
+  
+  .section-divider:before {
+    @apply -left-12;
+  }
+  
+  .section-divider:after {
+    @apply -right-12;
+  }
+  
+  .nav-link {
+    @apply relative text-sm uppercase tracking-wider text-foreground/80 hover:text-foreground transition-colors duration-300;
+  }
+  
+  .nav-link:after {
+    content: '';
+    @apply absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-px bg-foreground transition-all duration-300;
+  }
+  
+  .nav-link:hover:after {
+    @apply w-full;
+  }
+  
+  .drapery-button {
+    @apply hidden;
+  }
+  
+  .drapery-outline-button {
+    @apply hidden;
+  }
+  
+  .drapery-link {
+    @apply relative text-foreground hover:text-foreground/70 transition-colors inline-block;
+  }
+  
+  .drapery-link:after {
+    content: '';
+    @apply absolute bottom-0 left-0 w-0 h-px bg-foreground transition-all duration-300;
+  }
+  
+  .drapery-link:hover:after {
+    @apply w-full;
+  }
+  
+  .cta-button {
+    @apply px-8 py-4 bg-foreground text-background uppercase tracking-wider text-sm font-medium transition-all duration-300 shadow-md inline-flex items-center relative overflow-hidden;
+    letter-spacing: 0.2em;
+  }
+  
+  .cta-button:before {
+    content: '';
+    @apply absolute inset-0 bg-foreground/90 translate-x-full transition-transform duration-500 ease-in-out;
+  }
+  
+  .cta-button:hover:before {
+    @apply translate-x-0;
+  }
+  
+  .cta-button span, .cta-button svg {
+    @apply relative z-10;
+  }
+  
+  .cta-button svg {
+    @apply ml-2 transition-transform duration-300;
+  }
+  
+  .cta-button:hover svg {
+    @apply translate-x-1;
+  }
+  
+  .secondary-button {
+    @apply px-6 py-3 bg-transparent text-foreground uppercase tracking-wider text-xs font-medium border border-foreground/20 hover:border-foreground transition-all relative overflow-hidden;
+    letter-spacing: 0.2em;
+  }
+  
+  .product-card-button {
+    @apply w-full py-3 px-6 bg-foreground text-background uppercase tracking-wider text-xs font-medium relative overflow-hidden;
+    letter-spacing: 0.2em;
+    transition: all 0.4s ease;
+  }
+  
+  .product-card-button:before {
+    content: '';
+    @apply absolute inset-0 bg-foreground/80 translate-x-full transition-transform duration-500 ease-in-out;
+  }
+  
+  .product-card-button:hover:before {
+    @apply translate-x-0;
+  }
+  
+  .product-card-button span {
+    @apply relative z-10;
+  }
+  
+  .collection-card-button {
+    @apply px-4 py-2 border border-white/70 text-white uppercase tracking-wider text-xs opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 backdrop-blur-sm;
+    letter-spacing: 0.2em;
+  }
+  
+  .collection-card {
+    @apply relative overflow-hidden transition-all duration-500;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
+  }
+  
+  .collection-card-image {
+    @apply object-cover transition-transform duration-700;
+  }
+  
+  .collection-card:hover .collection-card-image {
+    @apply scale-105;
+  }
+  
+  .collection-card-overlay {
+    @apply absolute inset-0 bg-gradient-to-t from-foreground/80 to-transparent;
+  }
+  
+  .collection-card-content {
+    @apply absolute inset-0 flex flex-col items-center justify-end p-8;
+  }
+  
+  .collection-card-title {
+    @apply text-white text-2xl uppercase tracking-widest font-light mb-4 text-shadow-sm elegant-heading;
+    letter-spacing: 0.25em;
+  }
+}
+
+/* Custom styles for luxury silk elements */
+@layer components {
+  .luxury-card {
+    @apply relative overflow-hidden transition-all duration-500 hover:shadow-xl;
+    background: linear-gradient(135deg, white 0%, rgba(var(--primary)/0.1) 100%);
+    border: 1px solid rgba(var(--foreground)/0.05);
+  }
+  
+  .luxury-card:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, transparent, rgba(var(--primary)/0.2), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.8s ease-in-out;
+  }
+  
+  .luxury-card:hover:before {
+    transform: translateX(100%);
+  }
+  
+  .glass {
+    @apply backdrop-blur-sm;
+    background: rgba(255, 255, 255, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  
+  .fade-in {
+    animation: fadeIn 1.2s ease forwards;
+    opacity: 0;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .silk-divider {
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(var(--primary)), rgba(var(--accent)), transparent);
+    margin: 2rem 0;
+  }
+  
+  .silk-text-gradient {
+    @apply bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent;
+  }
+  
+  .text-shadow-sm {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  }
+  
+  .hover-lift {
+    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  
+  .hover-lift:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+  }
+}
+
+/* Enhanced product card styling */
+@layer components {
+  .product-card {
+    @apply relative overflow-hidden bg-white shadow-md hover:shadow-xl transition-all duration-500;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  }
+  
+  .product-card-image-container {
+    @apply relative overflow-hidden aspect-[3/4];
+  }
+  
+  .product-card-image {
+    @apply object-cover transition-transform duration-700;
+  }
+  
+  .product-card:hover .product-card-image {
+    @apply scale-105;
+  }
+  
+  .product-card-label {
+    @apply absolute top-3 right-3 bg-white py-1.5 px-4 text-xs uppercase tracking-wider font-medium;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+    letter-spacing: 0.15em;
+  }
+  
+  .product-card-content {
+    @apply p-8 text-center;
+  }
+  
+  .product-card-title {
+    @apply block mb-2 text-xl tracking-wide font-light transition-colors;
+    letter-spacing: 0.1em;
+  }
+  
+  .product-card-title:hover {
+    @apply text-primary-foreground;
+  }
+  
+  .product-card-price {
+    @apply text-foreground/70 mb-6 font-medium;
+  }
+  
+  .product-card-divider {
+    @apply h-px w-full bg-foreground/5 mb-6;
+  }
+}
+
+/* Additional professional styling */
+@layer utilities {
+  .bg-gradient-subtle {
+    background: linear-gradient(135deg, #f9f7f4 0%, #f2efe9 100%);
+  }
+  
+  .bg-gradient-warm {
+    background: linear-gradient(135deg, #f7f4f2 0%, #f5f2ee 100%);
+  }
+  
+  .section-shadow {
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.03);
+  }
+  
+  .decorated-corners {
+    position: relative;
+  }
+  
+  .decorated-corners:before, 
+  .decorated-corners:after {
+    content: '';
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    border-color: rgba(var(--primary)/50);
+    border-style: solid;
+    z-index: 0;
+  }
+  
+  .decorated-corners:before {
+    top: -15px;
+    left: -15px;
+    border-width: 1px 0 0 1px;
+  }
+  
+  .decorated-corners:after {
+    bottom: -15px;
+    right: -15px;
+    border-width: 0 1px 1px 0;
+  }
+  
+  /* Added luxury effects */
+  .gold-shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .gold-shimmer:after {
+    content: '';
+    position: absolute;
+    top: -100%;
+    left: -100%;
+    width: 50%;
+    height: 300%;
+    background: linear-gradient(
+      to bottom right,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.05) 50%,
+      rgba(255, 255, 255, 0.1) 50.1%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    transform: rotate(25deg);
+    animation: shimmer 5s infinite;
+  }
+  
+  @keyframes shimmer {
+    0% { transform: translateX(-100%) rotate(25deg); }
+    100% { transform: translateX(250%) rotate(25deg); }
+  }
+  
+  .silk-texture {
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='rgba(0,0,0,0.015)' fill-rule='evenodd'/%3E%3C/svg%3E");
+    background-position: center;
+  }
+  
+  .border-gradient {
+    position: relative;
+    z-index: 0;
+  }
+  
+  .border-gradient:before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    inset: -2px;
+    background: linear-gradient(135deg, rgba(var(--primary), 0.3), rgba(var(--secondary), 0.5), rgba(var(--accent), 0.3));
+    border-radius: inherit;
+  }
+}
+
+/* Animations */
+@layer utilities {
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  @keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+  }
+  
+  .animate-pulse-subtle {
+    animation: pulse-subtle 3s infinite;
+  }
+  
+  @keyframes pulse-subtle {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+}
+
