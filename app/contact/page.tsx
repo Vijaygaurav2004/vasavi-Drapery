@@ -3,7 +3,7 @@
 import type React from "react"
 
 import { useState } from "react"
-import { Mail, MapPin, Phone } from "lucide-react"
+import { Mail, Phone } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -55,15 +55,15 @@ export default function ContactPage() {
 
   return (
     <div className="container py-12">
-      <div className="max-w-5xl mx-auto">
-        <h1 className="text-3xl md:text-4xl font-bold mb-6 text-center">Contact Us</h1>
+      <div className="max-w-3xl mx-auto">
+        <h1 className="text-3xl md:text-4xl font-bold mb-6 text-center elegant-heading silk-text-gradient">Contact Us</h1>
         <p className="text-muted-foreground text-center mb-12 max-w-2xl mx-auto">
           Have questions about our products or need assistance with your order? We're here to help. Reach out to us
           using any of the methods below.
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          <Card>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+          <Card className="hover-lift">
             <CardContent className="p-6 flex flex-col items-center text-center">
               <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
                 <Phone className="h-6 w-6 text-primary" />
@@ -76,7 +76,7 @@ export default function ContactPage() {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="hover-lift">
             <CardContent className="p-6 flex flex-col items-center text-center">
               <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
                 <Mail className="h-6 w-6 text-primary" />
@@ -88,29 +88,29 @@ export default function ContactPage() {
           </Card>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div>
-            <h2 className="text-2xl font-bold mb-6">Send Us a Message</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <Card className="shadow-md decorated-corners border-gradient animate-fade-slide-up">
+          <CardContent className="p-8">
+            <h2 className="text-2xl font-bold mb-6 text-center elegant-heading">Send Us a Message</h2>
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div className="space-y-2">
                   <Label htmlFor="name">Your Name</Label>
-                  <Input id="name" name="name" value={formData.name} onChange={handleChange} required />
+                  <Input id="name" name="name" value={formData.name} onChange={handleChange} required className="glass" />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="email">Email Address</Label>
-                  <Input id="email" name="email" type="email" value={formData.email} onChange={handleChange} required />
+                  <Input id="email" name="email" type="email" value={formData.email} onChange={handleChange} required className="glass" />
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div className="space-y-2">
                   <Label htmlFor="phone">Phone Number</Label>
-                  <Input id="phone" name="phone" value={formData.phone} onChange={handleChange} />
+                  <Input id="phone" name="phone" value={formData.phone} onChange={handleChange} className="glass" />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="subject">Subject</Label>
-                  <Input id="subject" name="subject" value={formData.subject} onChange={handleChange} required />
+                  <Input id="subject" name="subject" value={formData.subject} onChange={handleChange} required className="glass" />
                 </div>
               </div>
 
@@ -123,54 +123,18 @@ export default function ContactPage() {
                   value={formData.message}
                   onChange={handleChange}
                   required
+                  className="glass"
                 />
               </div>
 
-              <Button type="submit" className="w-full" disabled={isSubmitting}>
-                {isSubmitting ? "Sending..." : "Send Message"}
-              </Button>
-            </form>
-          </div>
-
-          <div>
-            <h2 className="text-2xl font-bold mb-6">Store Location</h2>
-            <div className="rounded-lg overflow-hidden h-[300px] mb-6 bg-muted">
-              {/* This would be replaced with an actual map component */}
-              <div className="w-full h-full flex items-center justify-center bg-muted">
-                <p className="text-muted-foreground">Map would be displayed here</p>
+              <div className="pt-2">
+                <Button type="submit" className="w-full luxury-button" disabled={isSubmitting}>
+                  {isSubmitting ? "Sending..." : "Send Message"}
+                </Button>
               </div>
-            </div>
-
-            <Card>
-              <CardContent className="p-6">
-                <h3 className="font-bold mb-2">Silk Elegance Flagship Store</h3>
-                <address className="not-italic text-muted-foreground">
-                  <p>123 Silk Street</p>
-                  <p>Textile District</p>
-                  <p>Mumbai, India 400001</p>
-                </address>
-
-                <div className="mt-4">
-                  <h4 className="font-medium mb-2">Store Hours</h4>
-                  <ul className="space-y-1 text-muted-foreground">
-                    <li className="flex justify-between">
-                      <span>Monday - Friday</span>
-                      <span>10:00 AM - 8:00 PM</span>
-                    </li>
-                    <li className="flex justify-between">
-                      <span>Saturday</span>
-                      <span>10:00 AM - 9:00 PM</span>
-                    </li>
-                    <li className="flex justify-between">
-                      <span>Sunday</span>
-                      <span>11:00 AM - 6:00 PM</span>
-                    </li>
-                  </ul>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
+            </form>
+          </CardContent>
+        </Card>
       </div>
     </div>
   )

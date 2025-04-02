@@ -1,30 +1,9 @@
 "use client"
 
-import { useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
 
 export default function AboutPage() {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    subject: "",
-    message: ""
-  })
-  const [submitted, setSubmitted] = useState(false)
-  
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: value }))
-  }
-  
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    console.log("Form submitted:", formData)
-    // In a real application, you would send this data to your backend
-    setSubmitted(true)
-  }
-
   return (
     <main className="flex-1">
       {/* Hero Section */}
@@ -97,115 +76,6 @@ export default function AboutPage() {
               <p className="text-foreground/70">
                 We never compromise on quality. Each piece in our collection undergoes rigorous inspection to ensure the highest standards.
               </p>
-            </div>
-          </div>
-        </div>
-      </section>
-      
-      {/* Contact Form */}
-      <section className="py-28 bg-gradient-subtle silk-texture">
-        <div className="container">
-          <div className="max-w-3xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="section-title">Get in Touch</h2>
-              <div className="section-divider"></div>
-              <p className="section-subtitle">
-                We'd love to hear from you. Whether you have a question about our products, custom orders, or anything else, our team is ready to answer all your questions.
-              </p>
-            </div>
-            
-            {!submitted ? (
-              <form onSubmit={handleSubmit} className="bg-white p-12 shadow-xl border border-foreground/5 decorated-corners border-gradient">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-                  <div className="space-y-2">
-                    <label htmlFor="name" className="text-sm uppercase tracking-wider text-foreground/80">Your Name</label>
-                    <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleChange}
-                      required
-                      className="w-full p-3 border border-foreground/10 focus:border-primary focus:outline-none bg-muted/50"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label htmlFor="email" className="text-sm uppercase tracking-wider text-foreground/80">Your Email</label>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      required
-                      className="w-full p-3 border border-foreground/10 focus:border-primary focus:outline-none bg-muted/50"
-                    />
-                  </div>
-                </div>
-                
-                <div className="space-y-2 mb-8">
-                  <label htmlFor="subject" className="text-sm uppercase tracking-wider text-foreground/80">Subject</label>
-                  <input
-                    type="text"
-                    id="subject"
-                    name="subject"
-                    value={formData.subject}
-                    onChange={handleChange}
-                    required
-                    className="w-full p-3 border border-foreground/10 focus:border-primary focus:outline-none bg-muted/50"
-                  />
-                </div>
-                
-                <div className="space-y-2 mb-10">
-                  <label htmlFor="message" className="text-sm uppercase tracking-wider text-foreground/80">Message</label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    value={formData.message}
-                    onChange={handleChange}
-                    required
-                    rows={6}
-                    className="w-full p-3 border border-foreground/10 focus:border-primary focus:outline-none bg-muted/50"
-                  ></textarea>
-                </div>
-                
-                <div className="text-center">
-                  <button type="submit" className="cta-button group">
-                    <span>Send Message</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="ml-2 transition-transform duration-300 group-hover:translate-x-1"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
-                  </button>
-                </div>
-              </form>
-            ) : (
-              <div className="bg-white p-16 shadow-xl border border-primary/10 text-center decorated-corners">
-                <svg className="w-16 h-16 text-primary/70 mx-auto mb-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <h3 className="text-2xl mb-4 elegant-heading">Thank You</h3>
-                <p className="text-foreground/70 mb-8">
-                  Your message has been received. We'll get back to you as soon as possible.
-                </p>
-                <button 
-                  onClick={() => setSubmitted(false)}
-                  className="secondary-button"
-                >
-                  Send Another Message
-                </button>
-              </div>
-            )}
-            
-            <div className="mt-20 text-center">
-              <div className="inline-flex items-center justify-center">
-                <div className="space-y-2">
-                  <h4 className="text-lg uppercase tracking-wider mb-2 elegant-heading">Contact Information</h4>
-                  <p className="text-foreground/70">
-                    Email: <a href="mailto:info@vasthrika.com" className="hover:text-primary-foreground transition-colors">info@vasthrika.com</a>
-                  </p>
-                  <p className="text-foreground/70">
-                    Phone: <a href="tel:+919876543210" className="hover:text-primary-foreground transition-colors">+91 98765 43210</a>
-                  </p>
-                </div>
-              </div>
             </div>
           </div>
         </div>

@@ -48,9 +48,9 @@ export default function CollectionsPage() {
           <div className="w-20 h-px bg-primary mx-auto mb-8"></div>
           <p className="text-foreground/70 max-w-2xl mx-auto">
             Explore our curated collections of fine silk garments and fabrics, each representing centuries of artisanal excellence.
-          </p>
-        </div>
-        
+        </p>
+      </div>
+
         {/* Featured Categories Banner */}
         <div className="relative mb-28 overflow-hidden rounded-sm shadow-xl decorated-corners">
           <div className="absolute inset-0 bg-gradient-to-r from-foreground/50 to-foreground/10 z-10"></div>
@@ -84,26 +84,26 @@ export default function CollectionsPage() {
           {/* Women's Collection */}
           <div className="relative group">
             <div className="collection-card decorated-corners hover-lift">
-              <Link href="/collections/women" className="block group relative overflow-hidden aspect-square">
-                <Image
-                  src="https://www.drapery-silk.com/cdn/shop/files/DIa-Horizontal-Banner1.jpg?v=1728374317"
-                  alt="Women's Collection"
-                  fill
-                  className="collection-card-image"
-                />
-                <div className="collection-card-overlay"></div>
-                <div className="collection-card-content p-10">
-                  <h2 className="collection-card-title">Women</h2>
-                  <p className="text-white mb-8 text-center max-w-sm mx-auto">
-                    Discover our exquisite range of handcrafted silk sarees and premium fabrics
-                  </p>
-                  <div className="flex flex-col items-center gap-4">
-                    <Link href="/collections/sarees" className="collection-card-button">
-                      Sarees
-                    </Link>
-                    <Link href="/collections/fabric" className="collection-card-button">
-                      Fabric
-                    </Link>
+              <Link href="/collections/women" className="block">
+                <div className="relative overflow-hidden aspect-square">
+                  <Image
+                    src="https://www.drapery-silk.com/cdn/shop/files/DIa-Horizontal-Banner1.jpg?v=1728374317"
+                    alt="Women's Collection"
+                    fill
+                    priority
+                    className="collection-card-image"
+                  />
+                  <div className="collection-card-overlay"></div>
+                  <div className="collection-card-content p-10">
+                    <h2 className="collection-card-title">Women</h2>
+                    <p className="text-white mb-8 text-center max-w-sm mx-auto">
+                      Discover our exquisite range of handcrafted silk sarees and premium fabrics
+                    </p>
+                    <div className="flex flex-col items-center gap-4">
+                      <Link href="/collections/women" className="collection-card-button">
+                        Explore Collection
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </Link>
@@ -114,11 +114,11 @@ export default function CollectionsPage() {
                 Timeless silk sarees and fabric with exquisite craftsmanship, blending tradition with contemporary elegance.
               </p>
               <div className="flex gap-4">
-                <Link href="/collections/sarees" className="drapery-link text-sm uppercase tracking-wider">
-                  Explore Sarees
+                <Link href="/collections/kanjivaram" className="drapery-link text-sm uppercase tracking-wider">
+                  Kanjivaram
                 </Link>
-                <Link href="/collections/fabric" className="drapery-link text-sm uppercase tracking-wider">
-                  Explore Fabric
+                <Link href="/collections/banarasi" className="drapery-link text-sm uppercase tracking-wider">
+                  Banarasi
                 </Link>
               </div>
             </div>
@@ -127,26 +127,25 @@ export default function CollectionsPage() {
           {/* Men's Collection */}
           <div className="relative group">
             <div className="collection-card decorated-corners hover-lift">
-              <Link href="/collections/men" className="block group relative overflow-hidden aspect-square">
-                <Image
-                  src="https://www.drapery-silk.com/cdn/shop/files/DIa-Horizontal-Banner1.jpg?v=1728374317"
-                  alt="Men's Collection"
-                  fill
-                  className="collection-card-image"
-                />
-                <div className="collection-card-overlay"></div>
-                <div className="collection-card-content p-10">
-                  <h2 className="collection-card-title">Men</h2>
-                  <p className="text-white mb-8 text-center max-w-sm mx-auto">
-                    Explore our collection of traditional dhothis and premium silk fabrics
-                  </p>
-                  <div className="flex flex-col items-center gap-4">
-                    <Link href="/collections/dhothi" className="collection-card-button">
-                      Dhothi
-                    </Link>
-                    <Link href="/collections/fabric-men" className="collection-card-button">
-                      Fabric
-                    </Link>
+              <Link href="/collections/men" className="block">
+                <div className="relative overflow-hidden aspect-square">
+                  <Image
+                    src="https://www.drapery-silk.com/cdn/shop/files/DIa-Horizontal-Banner1.jpg?v=1728374317"
+                    alt="Men's Collection"
+                    fill
+                    className="collection-card-image"
+                  />
+                  <div className="collection-card-overlay"></div>
+                  <div className="collection-card-content p-10">
+                    <h2 className="collection-card-title">Men</h2>
+                    <p className="text-white mb-8 text-center max-w-sm mx-auto">
+                      Explore our collection of traditional dhothis and premium silk fabrics
+                    </p>
+                    <div className="flex flex-col items-center gap-4">
+                      <Link href="/collections/men" className="collection-card-button">
+                        Explore Collection
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </Link>
@@ -157,11 +156,11 @@ export default function CollectionsPage() {
                 Sophisticated dhothis and premium fabrics crafted with precision, offering both comfort and elegance.
               </p>
               <div className="flex gap-4">
-                <Link href="/collections/dhothi" className="drapery-link text-sm uppercase tracking-wider">
-                  Explore Dhothi
+                <Link href="/collections/ceremonial" className="drapery-link text-sm uppercase tracking-wider">
+                  Ceremonial
                 </Link>
-                <Link href="/collections/fabric-men" className="drapery-link text-sm uppercase tracking-wider">
-                  Explore Fabric
+                <Link href="/collections/wedding" className="drapery-link text-sm uppercase tracking-wider">
+                  Wedding
                 </Link>
               </div>
             </div>

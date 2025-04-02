@@ -39,8 +39,8 @@ export default function Home() {
                   src="https://www.drapery-silk.com/cdn/shop/files/DIa-Horizontal-Banner1.jpg?v=1728374317"
                   alt="Luxury Silk Saree"
                   fill
-                  className="object-cover object-center"
                   priority
+                  className="object-cover object-center"
                 />
                 <div className="absolute inset-0 bg-gradient-to-r from-white/50 via-transparent to-transparent md:bg-none"></div>
                 <div className="absolute bottom-12 left-0 md:hidden w-full text-center">
@@ -174,50 +174,67 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             {/* Women's Collection */}
             <div className="collection-card decorated-corners hover-lift">
-              <Link href="/collections/women" className="block group relative overflow-hidden aspect-square">
-                <Image
-                  src="https://www.drapery-silk.com/cdn/shop/files/DIa-Horizontal-Banner1.jpg?v=1728374317"
-                  alt="Women's Collection"
-                  fill
-                  className="collection-card-image"
-                />
-                <div className="collection-card-overlay"></div>
-                <div className="collection-card-content">
-                  <h3 className="collection-card-title">Women</h3>
-                  <div className="flex flex-col items-center gap-2">
-                    <Link href="/collections/sarees" className="collection-card-button">
-                      Sarees
-                    </Link>
-                    <Link href="/collections/fabric" className="collection-card-button">
-                      Fabric
-                    </Link>
+              <Link href="/collections/women" className="block">
+                <div className="relative overflow-hidden aspect-square">
+                  <Image
+                    src="https://www.drapery-silk.com/cdn/shop/files/DIa-Horizontal-Banner1.jpg?v=1728374317"
+                    alt="Women's Collection"
+                    fill
+                    priority
+                    className="collection-card-image"
+                  />
+                  <div className="collection-card-overlay"></div>
+                  <div className="collection-card-content">
+                    <h3 className="collection-card-title">Women</h3>
+                    <div className="flex flex-col items-center gap-2">
+                      <span className="collection-card-button pointer-events-none">
+                        Sarees
+                      </span>
+                      <span className="collection-card-button pointer-events-none">
+                        Fabric
+                      </span>
+                    </div>
                   </div>
                 </div>
               </Link>
+              <div className="mt-4 text-center">
+                <Link href="/collections/women" className="cta-button group">
+                  <span>View Women's Collection</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="ml-2 transition-transform duration-300 group-hover:translate-x-1"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+                </Link>
+              </div>
             </div>
             
             {/* Men's Collection */}
             <div className="collection-card decorated-corners hover-lift">
-              <Link href="/collections/men" className="block group relative overflow-hidden aspect-square">
-                <Image
-                  src="https://www.drapery-silk.com/cdn/shop/files/DIa-Horizontal-Banner1.jpg?v=1728374317"
-                  alt="Men's Collection"
-                  fill
-                  className="collection-card-image"
-                />
-                <div className="collection-card-overlay"></div>
-                <div className="collection-card-content">
-                  <h3 className="collection-card-title">Men</h3>
-                  <div className="flex flex-col items-center gap-2">
-                    <Link href="/collections/dhothi" className="collection-card-button">
-                      Dhothi
-                    </Link>
-                    <Link href="/collections/fabric-men" className="collection-card-button">
-                      Fabric
-                    </Link>
+              <Link href="/collections/men" className="block">
+                <div className="relative overflow-hidden aspect-square">
+                  <Image
+                    src="https://www.drapery-silk.com/cdn/shop/files/DIa-Horizontal-Banner1.jpg?v=1728374317"
+                    alt="Men's Collection"
+                    fill
+                    className="collection-card-image"
+                  />
+                  <div className="collection-card-overlay"></div>
+                  <div className="collection-card-content">
+                    <h3 className="collection-card-title">Men</h3>
+                    <div className="flex flex-col items-center gap-2">
+                      <span className="collection-card-button pointer-events-none">
+                        Dhothi
+                      </span>
+                      <span className="collection-card-button pointer-events-none">
+                        Fabric
+                      </span>
+                    </div>
                   </div>
                 </div>
               </Link>
+              <div className="mt-4 text-center">
+                <Link href="/collections/men" className="cta-button group">
+                  <span>View Men's Collection</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="ml-2 transition-transform duration-300 group-hover:translate-x-1"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+                </Link>
+              </div>
             </div>
           </div>
         </div>
