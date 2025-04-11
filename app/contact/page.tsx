@@ -10,9 +10,10 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { toast } from "@/components/ui/use-toast"
+import { useToast } from "@/components/ui/use-toast"
 
 export default function ContactPage() {
+  const { toast } = useToast()
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -82,7 +83,7 @@ export default function ContactPage() {
                 <Mail className="h-6 w-6 text-primary" />
               </div>
               <h3 className="font-bold mb-2">Email</h3>
-              <p className="text-muted-foreground mb-4">Send us an email and we'll get back to you within 24 hours.</p>
+              <p className="text-muted-foreground mb-4">Send us an email and we&apos;ll get back to you within 24 hours.</p>
               <p className="font-medium">info@silkelegance.com</p>
             </CardContent>
           </Card>

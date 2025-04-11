@@ -1,10 +1,10 @@
 import type { Metadata } from 'next'
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
 import { Toaster } from "@/components/ui/toaster"
 import './globals.css'
 import CartHeader from '@/components/cart-header'
 import { CartProvider } from './context/cart-context'
+import MobileMenu from './components/mobile-menu'
 
 export const metadata: Metadata = {
   title: 'Vasthrika - Luxury Silk Sarees',
@@ -22,29 +22,27 @@ export default function RootLayout({
       <body>
         <CartProvider>
           <div className="flex min-h-screen flex-col">
-            <header className="sticky top-0 z-50 w-full bg-[#fafafa] border-b border-foreground/5 shadow-sm">
-              <div className="container mx-auto flex h-20 items-center justify-between">
+            <header className="sticky top-0 z-50 w-full bg-rose-50 border-b border-rose-100 shadow-md">
+              <div className="container mx-auto flex h-20 items-center justify-between px-4 lg:px-8">
                 <Link href="/" className="flex items-center">
-                  <span className="text-2xl uppercase tracking-widest font-light text-[#333333] elegant-heading">Vasthrika</span>
-                  <span className="text-xs uppercase ml-1 tracking-wider text-[#666666]">by Vasavi</span>
+                  <span className="text-xl md:text-2xl uppercase tracking-widest font-light text-rose-900 elegant-heading">Vasthrika</span>
+                  <span className="text-[10px] md:text-xs uppercase ml-1 tracking-wider text-rose-600">by Vasavi</span>
                 </Link>
                 
-                <nav className="hidden md:flex items-center gap-10">
-                  <Link href="/" className="nav-link text-[#333333] hover:text-[#000000] uppercase text-sm tracking-wider">HOME</Link>
-                  <Link href="/collections" className="nav-link text-[#333333] hover:text-[#000000] uppercase text-sm tracking-wider">COLLECTIONS</Link>
-                  <Link href="/about" className="nav-link text-[#333333] hover:text-[#000000] uppercase text-sm tracking-wider">OUR STORY</Link>
-                  <Link href="/contact" className="nav-link text-[#333333] hover:text-[#000000] uppercase text-sm tracking-wider">CONTACT</Link>
+                <nav className="hidden md:flex items-center gap-6 lg:gap-10">
+                  <Link href="/" className="nav-link text-rose-700 hover:text-rose-900 uppercase text-sm tracking-wider transition-colors">HOME</Link>
+                  <Link href="/collections" className="nav-link text-rose-700 hover:text-rose-900 uppercase text-sm tracking-wider transition-colors">COLLECTIONS</Link>
+                  <Link href="/about" className="nav-link text-rose-700 hover:text-rose-900 uppercase text-sm tracking-wider transition-colors">OUR STORY</Link>
+                  <Link href="/contact" className="nav-link text-rose-700 hover:text-rose-900 uppercase text-sm tracking-wider transition-colors">CONTACT</Link>
                 </nav>
                 
-                <div className="flex items-center gap-6">
-                  <button className="text-sm uppercase tracking-wider text-[#333333] hover:text-[#000000] transition-colors">
+                <div className="flex items-center gap-4 md:gap-6">
+                  <button className="text-sm uppercase tracking-wider text-rose-700 hover:text-rose-900 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="mr-1 inline-block"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
                     <span className="hidden sm:inline-block">SEARCH</span>
                   </button>
                   <CartHeader />
-                  <Button className="md:hidden" size="icon" variant="ghost">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#333333" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
-                  </Button>
+                  <MobileMenu />
                 </div>
               </div>
             </header>

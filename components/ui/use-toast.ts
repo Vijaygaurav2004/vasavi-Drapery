@@ -6,6 +6,12 @@ import * as React from "react"
 import type {
   ToastActionElement,
   ToastProps,
+  ToastProvider,
+  ToastViewport,
+  Toast,
+  ToastTitle,
+  ToastDescription,
+  ToastClose,
 } from "@/components/ui/toast"
 
 const TOAST_LIMIT = 1
@@ -171,7 +177,8 @@ function toast({ ...props }: Toast) {
   }
 }
 
-function useToast() {
+// Export the useToast hook
+export function useToast() {
   const [state, setState] = React.useState<State>(memoryState)
 
   React.useEffect(() => {
@@ -190,5 +197,3 @@ function useToast() {
     dismiss: (toastId?: string) => dispatch({ type: "DISMISS_TOAST", toastId }),
   }
 }
-
-export { useToast, toast }

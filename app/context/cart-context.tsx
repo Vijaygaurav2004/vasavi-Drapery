@@ -1,89 +1,137 @@
+// app/context/cart-context.tsx (in your main website)
 "use client"
 
 import React, { createContext, useContext, useState, useEffect } from 'react'
+import { checkProductStock } from '@/lib/firebase/products'
+// Fix for toast import - use the correct path to your toast component
+import { useToast } from '@/components/ui/use-toast'
 
+// Define the type for cart items
 type CartItem = {
-  id: number
-  name: string
-  price: number
-  image: string
-  quantity: number
+  id: string;
+  name: string;
+  price: number;
+  image: string;
+  quantity: number;
 }
 
 type CartContextType = {
-  items: CartItem[]
-  addToCart: (product: any) => void
-  removeFromCart: (productId: number) => void
-  updateQuantity: (productId: number, quantity: number) => void
-  clearCart: () => void
-  cartCount: number
-  cartTotal: number
+  items: CartItem[];
+  addToCart: (product: any) => Promise<void>;
+  removeFromCart: (productId: string) => void;
+  updateQuantity: (productId: string, quantity: number) => void;
+  clearCart: () => void;
+  cartCount: number;
+  cartTotal: number;
 }
 
-const CartContext = createContext<CartContextType | undefined>(undefined)
+const CartContext = createContext<CartContextType | undefined>(undefined);
+
+export function useCart() {
+  const context = useContext(CartContext);
+  if (context === undefined) {
+    throw new Error('useCart must be used within a CartProvider');
+  }
+  return context;
+}
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>([])
+  // Define state with the correct type
+  const { toast } = useToast()
+  const [items, setItems] = useState<CartItem[]>([]);
 
   // Load cart from localStorage on mount
   useEffect(() => {
-    const savedCart = localStorage.getItem('cart')
+    const savedCart = localStorage.getItem('cart');
     if (savedCart) {
       try {
-        setItems(JSON.parse(savedCart))
+        setItems(JSON.parse(savedCart));
       } catch (e) {
-        console.error('Failed to parse cart from localStorage:', e)
+        console.error('Failed to parse cart from localStorage:', e);
       }
     }
-  }, [])
+  }, []);
 
   // Save cart to localStorage whenever it changes
   useEffect(() => {
-    localStorage.setItem('cart', JSON.stringify(items))
-  }, [items])
+    localStorage.setItem('cart', JSON.stringify(items));
+  }, [items]);
 
-  const addToCart = (product: any) => {
-    setItems(currentItems => {
-      const existingItem = currentItems.find(item => item.id === product.id)
+  const addToCart = async (product: any) => {
+    // First check if the product is still in stock
+    try {
+      const { inStock, stock } = await checkProductStock(product.id);
       
-      if (existingItem) {
-        return currentItems.map(item =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        )
+      if (!inStock) {
+        toast({
+          title: "Out of Stock",
+          description: "Sorry, this product is currently out of stock.",
+          variant: "destructive"
+        });
+        return;
       }
       
-      return [...currentItems, {
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        image: product.image,
-        quantity: 1
-      }]
-    })
-  }
+      // Continue with existing add to cart logic...
+      setItems(currentItems => {
+        const existingItem = currentItems.find(item => item.id === product.id);
+        
+        if (existingItem) {
+          // Check if adding more would exceed available stock
+          if (existingItem.quantity + 1 > stock) {
+            toast({
+              title: "Stock Limit Reached",
+              description: `Sorry, only ${stock} items available in stock.`,
+              variant: "destructive"
+            });
+            return currentItems;
+          }
+          
+          return currentItems.map(item =>
+            item.id === product.id
+              ? { ...item, quantity: item.quantity + 1 }
+              : item
+          );
+        }
+        
+        return [...currentItems, {
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          image: product.image,
+          quantity: 1
+        }];
+      });
+    } catch (error) {
+      console.error('Error checking stock:', error);
+      toast({
+        title: "Error",
+        description: "Could not add to cart. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
 
-  const removeFromCart = (productId: number) => {
-    setItems(currentItems => currentItems.filter(item => item.id !== productId))
-  }
+  const removeFromCart = (productId: string) => {
+    setItems(currentItems => currentItems.filter(item => item.id !== productId));
+  };
 
-  const updateQuantity = (productId: number, quantity: number) => {
+  const updateQuantity = (productId: string, quantity: number) => {
     setItems(currentItems =>
       currentItems.map(item =>
         item.id === productId
           ? { ...item, quantity: Math.max(0, quantity) }
           : item
       ).filter(item => item.quantity > 0)
-    )
-  }
+    );
+  };
 
   const clearCart = () => {
-    setItems([])
-  }
+    setItems([]);
+  };
 
-  const cartCount = items.reduce((total, item) => total + item.quantity, 0)
-  const cartTotal = items.reduce((total, item) => total + (item.price * item.quantity), 0)
+  // Calculate cart count and total
+  const cartCount = items.reduce((total, item) => total + item.quantity, 0);
+  const cartTotal = items.reduce((total, item) => total + (item.price * item.quantity), 0);
 
   return (
     <CartContext.Provider value={{
@@ -97,13 +145,5 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }}>
       {children}
     </CartContext.Provider>
-  )
+  );
 }
-
-export function useCart() {
-  const context = useContext(CartContext)
-  if (context === undefined) {
-    throw new Error('useCart must be used within a CartProvider')
-  }
-  return context
-} 

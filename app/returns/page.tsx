@@ -87,6 +87,20 @@ export default function ReturnsPage() {
                 </div>
               </div>
             </section>
+
+            <section className="mt-12">
+              <h2 className="text-2xl font-bold mb-4 elegant-heading silk-text-gradient">Important Notes</h2>
+              <ul className="list-disc pl-5 text-foreground/80 space-y-2">
+                <li className="mb-2">We recommend carefully reviewing the product description, images, and videos before making a purchase. Slight color variations may occur due to screen settings or photography lighting.</li>
+                <li className="mb-2">Our team performs a thorough quality check before dispatching any order.</li>
+                <li className="mb-2">Return shipping costs are the responsibility of the customer unless the return is due to a manufacturing defect or an error on our part.</li>
+                <li className="mb-2">We are not responsible for items damaged or lost during return transit. Please use a reliable courier service with tracking.</li>
+                <li className="mb-2">Exchanges must be initiated within 7 days of receiving your order.</li>
+                <li className="mb-2">The saree must be unused, unwashed, and in its original condition with all tags attached.</li>
+                <li className="mb-2">Sarees with fall and edging work done are considered customized and are not eligible for return or exchange unless there is a manufacturing defect.</li>
+                <li className="mb-2">Sarees purchased during sale periods or with promotional discounts are final sale and cannot be returned or exchanged.</li>
+              </ul>
+            </section>
           </div>
         </div>
       </div>

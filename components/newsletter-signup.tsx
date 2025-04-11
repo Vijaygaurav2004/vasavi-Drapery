@@ -47,8 +47,8 @@ export default function NewsletterSignup() {
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="ml-2 transition-transform duration-300 group-hover:translate-x-1"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
                 </button>
               </div>
-              <p className="text-xs text-foreground/50 mt-4 text-center">
-                By subscribing, you agree to our Privacy Policy and consent to receive updates from Vasthrika.
+              <p className="text-sm text-muted-foreground mt-4">
+                By subscribing, you agree to our Privacy Policy. You can unsubscribe at any time.
               </p>
             </form>
           ) : (

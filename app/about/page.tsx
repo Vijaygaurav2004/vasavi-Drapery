@@ -1,7 +1,7 @@
 "use client"
 
-import Link from "next/link"
 import Image from "next/image"
+import type React from "react"
 
 export default function AboutPage() {
   return (
@@ -14,7 +14,7 @@ export default function AboutPage() {
               <h1 className="text-4xl md:text-5xl mb-6 uppercase tracking-wider font-light elegant-heading">Our Story</h1>
               <div className="w-20 h-px bg-primary mb-8"></div>
               <p className="text-foreground/70 mb-6 leading-relaxed">
-                At Vasthrika by Vasavi, our journey began with a profound respect for India's rich textile heritage. 
+                At Vasthrika by Vasavi, our journey began with a profound respect for India&apos;s rich textile heritage. 
                 Founded with a mission to preserve traditional silk craftsmanship while making 
                 these timeless treasures accessible to the modern world.
               </p>

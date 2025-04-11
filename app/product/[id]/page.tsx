@@ -6,7 +6,7 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { Minus, Plus, ShoppingCart, Heart } from "lucide-react"
-import { toast } from "@/components/ui/use-toast"
+import { useToast } from "@/components/ui/use-toast"
 
 // This would normally come from a database or API
 const getProductById = (id: string) => {
@@ -41,6 +41,8 @@ const getProductById = (id: string) => {
 }
 
 export default function ProductPage({ params }: { params: { id: string } }) {
+  // Call useToast hook
+  const { toast } = useToast(); 
   const product = getProductById(params.id)
   const discountedPrice = product.price
   const originalPrice = product.originalPrice || product.price
@@ -145,7 +147,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
             <div className="mb-4 overflow-hidden rounded-sm decorated-corners border border-amber-100/30 shadow-md">
               <div className="relative aspect-square gallery-effect">
             <Image
-                  src={product.images[0]}
+                  src={product.images && product.images.length > 0 ? product.images[0] : "/placeholder-image.jpg"}
               alt={product.name}
               fill
                   priority
