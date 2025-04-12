@@ -15,35 +15,6 @@ export default function CollectionsPage() {
         </p>
       </div>
 
-        {/* Featured Categories Banner */}
-        <div className="relative mb-28 overflow-hidden rounded-sm shadow-xl decorated-corners">
-          <div className="absolute inset-0 bg-gradient-to-r from-foreground/50 to-foreground/10 z-10"></div>
-          <div className="absolute inset-0">
-            <Image
-              src="https://www.drapery-silk.com/cdn/shop/files/DIa-Horizontal-Banner1.jpg?v=1728374317"
-              alt="Luxury Silk Collection"
-              fill
-              className="object-cover"
-            />
-          </div>
-          <div className="relative z-20 py-28 px-8 md:px-16">
-            <div className="max-w-lg">
-              <h2 className="text-3xl md:text-4xl mb-6 uppercase tracking-wider font-light text-white elegant-heading">
-                Exquisite Craftsmanship
-              </h2>
-              <p className="text-white/90 mb-10 text-lg">
-                Discover the perfect blend of tradition and contemporary elegance in our 
-                handcrafted silk collections, created with meticulous attention to detail
-                and the finest materials.
-              </p>
-              <Link href="#categories" className="cta-button group bg-white text-foreground">
-                <span>Browse Collections</span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="ml-2 transition-transform duration-300 group-hover:translate-x-1"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
-              </Link>
-            </div>
-          </div>
-        </div>
-        
         <div id="categories" className="grid grid-cols-1 md:grid-cols-2 gap-20 mb-28">
           {/* Women's Collection */}
           <div className="relative group">

@@ -3,10 +3,9 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { ShoppingCart } from "lucide-react"
+import { ShoppingCart, X } from "lucide-react"
 import { useToast } from "@/components/ui/use-toast"
 import { useCart } from "@/app/context/cart-context"
-// Fix #1: Update import to match your Firebase product service
 import { getProducts, Product } from "@/lib/firebase/products"
 
 // Categories for filtering (Women's categories only for this page)
@@ -22,19 +21,21 @@ const categories = [
 export default function WomensCollectionPage() {
   const { toast } = useToast()
   const [products, setProducts] = useState<Product[]>([])
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([])
+  const [activeCategory, setActiveCategory] = useState("all")
   const [loading, setLoading] = useState(true)
   const [addingToCart, setAddingToCart] = useState<string | null>(null)
   const { addToCart } = useCart()
+  const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null)
 
   useEffect(() => {
-    // Fix #2 & #3: Replace subscription with standard fetch
     const loadProducts = async () => {
       try {
         setLoading(true)
         // Get all products and filter client-side
         const allProducts = await getProducts()
         
-       // Filter women's products
+        // Filter women's products
         const womensProducts = allProducts.filter(product => 
           product.category === "Silk" ||
           product.category === "Tissue" ||
@@ -45,6 +46,7 @@ export default function WomensCollectionPage() {
         )
         
         setProducts(womensProducts)
+        setFilteredProducts(womensProducts)
       } catch (error) {
         console.error("Error loading products:", error)
         toast({
@@ -60,6 +62,25 @@ export default function WomensCollectionPage() {
     loadProducts()
   }, [toast])
 
+  // Filter products when category changes
+  useEffect(() => {
+    if (activeCategory === "all") {
+      setFilteredProducts(products)
+    } else {
+      const filtered = products.filter(product => {
+        const productCategory = product.category || '';
+        return productCategory.toLowerCase() === activeCategory.toLowerCase();
+      });
+      setFilteredProducts(filtered)
+    }
+  }, [activeCategory, products])
+
+  const handleCategoryChange = (categoryId: string) => {
+    setActiveCategory(categoryId)
+    // Scroll to products section with smooth behavior
+    document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' })
+  }
+
   const handleAddToCart = async (product: Product) => {
     setAddingToCart(product.id)
     try {
@@ -67,7 +88,6 @@ export default function WomensCollectionPage() {
         id: product.id,
         name: product.name,
         price: product.price,
-        // Fix #4: Use first image from images array
         image: product.images?.[0] || "/placeholder.svg",
       })
       toast({
@@ -86,6 +106,27 @@ export default function WomensCollectionPage() {
     }
   }
 
+  const openQuickView = (e: React.MouseEvent, product: Product) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setQuickViewProduct(product)
+    // Prevent body scrolling when modal is open
+    document.body.style.overflow = 'hidden'
+  }
+
+  const closeQuickView = () => {
+    setQuickViewProduct(null)
+    // Restore body scrolling
+    document.body.style.overflow = 'auto'
+  }
+
+  // Handle clicking outside the modal to close it
+  const handleModalBackdropClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      closeQuickView()
+    }
+  }
+
   return (
     <main className="flex-1 py-12 md:py-20 relative overflow-hidden">
       <div className="absolute inset-0 silk-pattern opacity-10"></div>
@@ -101,7 +142,12 @@ export default function WomensCollectionPage() {
           {categories.map((category) => (
             <button
               key={category.id}
-              className="px-6 py-2 rounded-full border border-amber-200/30 hover:border-amber-300/50 hover:bg-amber-50/50 transition-colors"
+              className={`px-6 py-2 rounded-full border transition-colors ${
+                activeCategory === category.id 
+                  ? 'border-primary bg-primary/10 text-primary font-medium' 
+                  : 'border-amber-200/30 hover:border-amber-300/50 hover:bg-amber-50/50'
+              }`}
+              onClick={() => handleCategoryChange(category.id)}
             >
               {category.name}
             </button>
@@ -110,11 +156,11 @@ export default function WomensCollectionPage() {
 
         {loading ? (
           <div className="text-center text-muted-foreground">Loading products...</div>
-        ) : products.length === 0 ? (
-          <div className="text-center text-muted-foreground">No products found.</div>
+        ) : filteredProducts.length === 0 ? (
+          <div className="text-center text-muted-foreground">No products found in this category.</div>
         ) : (
           <div id="products" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mb-20 stagger-animation">
-            {products.map((product, index) => (
+            {filteredProducts.map((product, index) => (
               <div 
                 key={product.id} 
                 className="product-card luxury-card border border-amber-100/30 decorated-corners overflow-hidden group hover-lift glow-hover"
@@ -122,14 +168,12 @@ export default function WomensCollectionPage() {
               >
                 <Link href={`/product/${product.id}`} className="block">
                   <div className="relative aspect-[3/4] overflow-hidden">
-                    {/* Fix #5: Use first image from images array */}
                     <Image
                       src={product.images?.[0] || "/placeholder.svg"}
                       alt={product.name}
                       fill
                       className="object-cover transition-transform duration-700 group-hover:scale-110"
                     />
-                    {/* Fix #6: Use a property that exists in your product structure */}
                     {product.stock <= 3 && product.stock > 0 && (
                       <div className="absolute top-4 right-4 bg-amber-500 px-3 py-1 text-white text-xs uppercase tracking-wider font-medium">
                         Low Stock
@@ -144,11 +188,7 @@ export default function WomensCollectionPage() {
                     <div className="absolute inset-x-0 bottom-0 p-6 translate-y-full group-hover:translate-y-0 transition-transform duration-500">
                       <button 
                         className="w-full luxury-button bg-white/20 backdrop-blur-sm border border-white/30 hover:bg-white/30 text-white text-center"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          console.log('Quick View clicked for:', product.id);
-                        }}
+                        onClick={(e) => openQuickView(e, product)}
                       >
                         Quick View
                       </button>
@@ -175,6 +215,79 @@ export default function WomensCollectionPage() {
           </div>
         )}
       </div>
+
+      {/* Quick View Modal */}
+      {quickViewProduct && (
+        <div 
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={handleModalBackdropClick}
+        >
+          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+            <div className="sticky top-0 flex justify-end p-4 bg-white border-b">
+              <button 
+                onClick={closeQuickView}
+                className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                aria-label="Close quick view"
+              >
+                <X size={24} />
+              </button>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6">
+              <div className="relative aspect-square overflow-hidden rounded-md">
+                <Image
+                  src={quickViewProduct.images?.[0] || "/placeholder.svg"}
+                  alt={quickViewProduct.name}
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              <div>
+                <h2 className="text-2xl font-medium mb-2">{quickViewProduct.name}</h2>
+                <div className="text-xl font-medium text-primary mb-4">₹{quickViewProduct.price.toLocaleString()}</div>
+                <div className="text-foreground/70 mb-6">{quickViewProduct.description}</div>
+                
+                {quickViewProduct.material && (
+                  <div className="mb-4">
+                    <span className="font-medium">Material:</span> {quickViewProduct.material}
+                  </div>
+                )}
+                
+                {quickViewProduct.color && (
+                  <div className="mb-4">
+                    <span className="font-medium">Color:</span> {quickViewProduct.color}
+                  </div>
+                )}
+                
+                <div className="mb-6">
+                  <span className="font-medium">Availability:</span> {quickViewProduct.stock > 0 ? `In Stock (${quickViewProduct.stock} available)` : 'Out of Stock'}
+                </div>
+                
+                <div className="flex gap-4">
+                  <button
+                    onClick={() => {
+                      handleAddToCart(quickViewProduct)
+                      if (quickViewProduct.stock > 0) {
+                        setTimeout(() => closeQuickView(), 1000)
+                      }
+                    }}
+                    className="flex-1 flex items-center justify-center gap-2 py-3 border border-transparent font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors disabled:opacity-50"
+                    disabled={addingToCart === quickViewProduct.id || quickViewProduct.stock <= 0}
+                  >
+                    <ShoppingCart size={18} /> 
+                    {addingToCart === quickViewProduct.id ? 'Adding...' : quickViewProduct.stock <= 0 ? 'Out of Stock' : 'Add to Cart'}
+                  </button>
+                  <Link
+                    href={`/product/${quickViewProduct.id}`}
+                    className="flex-1 py-3 border border-primary text-primary font-medium rounded-md text-center hover:bg-primary/10 transition-colors"
+                  >
+                    View Details
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   )
 }
