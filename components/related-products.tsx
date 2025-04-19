@@ -6,6 +6,8 @@ import Image from "next/image"
 import { ShoppingCart, Heart, ChevronLeft, ChevronRight, X } from "lucide-react"
 import { useToast } from "@/components/ui/use-toast"
 import { motion, AnimatePresence } from "framer-motion"
+import { useCart } from '@/app/context/cart-context'
+import { useWishlist } from '@/app/context/wishlist-context'
 
 // Sample related products - in a real app, this would come from an API based on the current product
 const relatedProducts = [
@@ -42,22 +44,41 @@ interface RelatedProductsProps {
 // QuickView Modal Component
 function QuickView({ product, onClose }: { product: any, onClose: () => void }) {
   const { toast } = useToast();
+  const { addToCart } = useCart();
+  const { addToWishlist, isInWishlist } = useWishlist();
   const [quantity, setQuantity] = useState(1);
   const [addingToCart, setAddingToCart] = useState(false);
   
   const handleAddToCart = () => {
     setAddingToCart(true);
     
+    addToCart({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.images[0],
+      quantity: 1
+    });
+    
     // Simulate API request delay
     setTimeout(() => {
-      toast({
-        title: "Added to cart",
-        description: `${product.name} has been added to your shopping cart.`,
-      });
-      
       setAddingToCart(false);
       onClose();
     }, 800);
+  };
+  
+  const handleAddToWishlist = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    setTimeout(() => {
+      addToWishlist({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        images: product.images
+      });
+    }, 0);
   };
   
   return (
@@ -108,6 +129,17 @@ function QuickView({ product, onClose }: { product: any, onClose: () => void }) 
                 )}
               </button>
               
+              <button
+                onClick={handleAddToWishlist}
+                className="w-10 h-10 border border-primary/20 rounded-sm flex items-center justify-center text-foreground/60 hover:text-primary hover:border-primary/40 transition-colors"
+                aria-label="Add to wishlist"
+              >
+                <Heart 
+                  size={18} 
+                  className={isInWishlist(product.id) ? "fill-red-500 text-red-500" : ""}
+                />
+              </button>
+              
               <Link 
                 href={`/product/${product.id}`}
                 className="secondary-button"
@@ -128,6 +160,8 @@ function QuickView({ product, onClose }: { product: any, onClose: () => void }) 
 
 export default function RelatedProducts({ productId }: RelatedProductsProps) {
   const { toast } = useToast();
+  const { addToCart } = useCart();
+  const { addToWishlist, isInWishlist } = useWishlist();
   const [addingToCart, setAddingToCart] = useState<string | null>(null);
   const [quickViewProduct, setQuickViewProduct] = useState<any | null>(null);
   
@@ -137,16 +171,34 @@ export default function RelatedProducts({ productId }: RelatedProductsProps) {
   const handleAddToCart = (product: any) => {
     setAddingToCart(product.id);
     
+    // Add to cart with the cart context
+    addToCart({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.images[0],
+      quantity: 1
+    });
+    
     // Simulate API request delay
     setTimeout(() => {
-      // In a real app, this would add to the cart context/state
-      toast({
-        title: "Added to cart",
-        description: `${product.name} has been added to your shopping cart.`,
-      });
-      
       setAddingToCart(null);
     }, 800);
+  }
+  
+  const handleAddToWishlist = (e: React.MouseEvent, product: any) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // Use setTimeout to avoid state updates during render
+    setTimeout(() => {
+      addToWishlist({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        images: product.images
+      });
+    }, 0);
   }
   
   const handleQuickView = (e: React.MouseEvent, product: any) => {
@@ -220,8 +272,12 @@ export default function RelatedProducts({ productId }: RelatedProductsProps) {
                   <button 
                     className="w-10 h-10 border border-primary/20 rounded-sm flex items-center justify-center text-foreground/60 hover:text-primary hover:border-primary/40 transition-colors"
                     aria-label="Add to wishlist"
+                    onClick={(e) => handleAddToWishlist(e, product)}
                   >
-                    <Heart size={18} />
+                    <Heart 
+                      size={18} 
+                      className={isInWishlist(product.id) ? "fill-red-500 text-red-500" : ""}
+                    />
                   </button>
                 </div>
               </div>

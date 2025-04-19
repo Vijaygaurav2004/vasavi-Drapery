@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Menu, X, ChevronDown, ChevronRight } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 
@@ -23,23 +23,23 @@ const menuItems: MenuItem[] = [
     label: "COLLECTIONS", 
     href: "/collections",
     submenu: {
-      label: "Categories",
+      label: "Collections",
       items: [
         { label: "Women's Collection", href: "/collections/women" },
         { label: "Men's Collection", href: "/collections/men" },
-        { label: "Sarees", href: "/collections/sarees" },
-        { label: "Dhothi", href: "/collections/dhothi" },
-        { label: "Fabric", href: "/collections/fabric" },
+        { label: "View All", href: "/collections" },
       ]
     }
   },
   { label: "OUR STORY", href: "/about" },
-  { label: "CONTACT", href: "/contact" }
+  { label: "CONTACT", href: "/contact" },
+  { label: "WISHLIST", href: "/wishlist" },
 ]
 
 export default function MobileMenu() {
   const [isOpen, setIsOpen] = useState(false)
   const [expandedItem, setExpandedItem] = useState<string | null>(null)
+  const menuRef = useRef<HTMLDivElement>(null)
 
   const toggleMenu = () => {
     setIsOpen(!isOpen)

@@ -98,12 +98,10 @@ export default function Home() {
                     className="collection-card-image"
                   />
                   <div className="collection-card-overlay"></div>
-                  <div className="collection-card-content">
-                    <h3 className="collection-card-title">Women</h3>
-                    <Link href="/collections/women" className="collection-card-button">
-                      Explore
-                    </Link>
-                  </div>
+                </div>
+                <div className="collection-card-content">
+                  <h3 className="collection-card-title">Women</h3>
+                  <span className="collection-card-button">Explore</span>
                 </div>
               </Link>
             </div>
@@ -119,12 +117,10 @@ export default function Home() {
                     className="collection-card-image"
                   />
                   <div className="collection-card-overlay"></div>
-                  <div className="collection-card-content">
-                    <h3 className="collection-card-title">Men</h3>
-                    <Link href="/collections/men" className="collection-card-button">
-                      Explore
-                    </Link>
-                  </div>
+                </div>
+                <div className="collection-card-content">
+                  <h3 className="collection-card-title">Men</h3>
+                  <span className="collection-card-button">Explore</span>
                 </div>
               </Link>
             </div>
