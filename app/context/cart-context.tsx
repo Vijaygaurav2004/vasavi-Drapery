@@ -1,12 +1,10 @@
-// app/context/cart-context.tsx (in your main website)
+// app/context/cart-context.tsx
 "use client"
 
 import React, { createContext, useContext, useState, useEffect } from 'react'
-import { checkProductStock } from '@/lib/firebase/products'
-// Fix for toast import - use the correct path to your toast component
-import { useToast } from '@/components/ui/use-toast'
+import { checkProductStock } from '@/lib/supabase/products'
+import { useToast } from "@/components/ui/use-toast"
 
-// Define the type for cart items
 type CartItem = {
   id: string;
   name: string;
@@ -36,7 +34,6 @@ export function useCart() {
 }
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  // Define state with the correct type
   const { toast } = useToast()
   const [items, setItems] = useState<CartItem[]>([]);
 

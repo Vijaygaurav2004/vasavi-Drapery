@@ -6,7 +6,7 @@ import Image from "next/image"
 import { ShoppingCart, X } from "lucide-react"
 import { useToast } from "@/components/ui/use-toast"
 import { useCart } from "@/app/context/cart-context"
-import { getProducts, Product } from "@/lib/firebase/products"
+import { getProducts, Product } from "@/lib/supabase/products"
 
 // Categories for men's page
 const categories = [

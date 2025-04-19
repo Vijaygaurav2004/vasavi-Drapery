@@ -7,7 +7,7 @@ import Image from "next/image"
 import { ShoppingCart } from "lucide-react"
 import { useToast } from "@/components/ui/use-toast"
 import { useCart } from "@/app/context/cart-context"
-import { getProducts, Product } from "@/lib/firebase/products"
+import { getProducts, Product } from "@/lib/supabase/products"
 
 export default function CategoryPage({ params }: { params: { category: string } }) {
   const { toast } = useToast()
