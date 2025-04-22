@@ -144,11 +144,8 @@ export default function RootLayout({
                         <p>Mumbai, 400001</p>
                         <p>India</p>
                       </address>
-                      <p className="text-sm text-foreground/70 mb-2">
-                        <a href="mailto:info@vasthrika.com" className="hover:text-primary transition-colors">info@vasthrika.com</a>
-                      </p>
                       <p className="text-sm text-foreground/70">
-                        <a href="tel:+919876543210" className="hover:text-primary transition-colors">+91 98765 43210</a>
+                        <a href="mailto:info@vasthrika.com" className="hover:text-primary transition-colors">info@vasthrika.com</a>
                       </p>
                     </div>
                   </div>

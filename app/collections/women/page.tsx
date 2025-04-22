@@ -34,8 +34,6 @@ const categories = [
   { id: "all", name: "All Products" },
   { id: "silk", name: "Silk" },
   { id: "tissue", name: "Tissue" },
-  { id: "ethnic", name: "Ethnic" },
-  { id: "fancy", name: "Fancy" },
   { id: "fabric", name: "Fabric" }
 ]
 
@@ -88,11 +86,8 @@ export default function WomensCollectionPage() {
         // Filter women's products (assume they have category containing "women" or specific women's categories)
         const womensProducts = allProducts.filter(product => 
           product.category?.toLowerCase().includes("women") ||
-          product.category === "Saree" ||
           product.category === "Silk" ||
           product.category === "Tissue" ||
-          product.category === "Ethnic" ||
-          product.category === "Fancy" ||
           product.category === "Fabric"
         )
         

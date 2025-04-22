@@ -80,53 +80,31 @@ export function SearchDialog({ children }: SearchDialogProps) {
             )}
           </form>
           
-          <div className="p-4 py-3 bg-gray-50 rounded-b-lg flex items-center justify-between text-xs text-gray-500">
-            <div className="flex items-center gap-2">
-              <span>Press</span> 
-              <KbdShortcut>Enter</KbdShortcut>
-              <span>to search</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span>Press</span>
-              <KbdShortcut>Esc</KbdShortcut>
-              <span>to close</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span>Press</span>
-              <div className="flex">
-                <KbdShortcut>Ctrl</KbdShortcut>
-                <span className="mx-1">+</span>
-                <KbdShortcut>K</KbdShortcut>
-              </div>
-              <span>to open</span>
-            </div>
-          </div>
-          
           {!searchQuery && (
             <div className="p-4 border-t border-gray-100 text-sm text-gray-500">
               <p className="font-medium text-amber-700 mb-2">Try searching for:</p>
               <div className="flex flex-wrap gap-2">
                 <button 
                   onClick={() => {
-                    setSearchQuery("silk saree")
+                    setSearchQuery("silk")
                     document.querySelector('form')?.dispatchEvent(
                       new Event('submit', { cancelable: true, bubbles: true })
                     )
                   }}
                   className="px-3 py-1 bg-amber-50 text-amber-800 rounded-full text-xs hover:bg-amber-100"
                 >
-                  Silk Saree
+                  Silk
                 </button>
                 <button 
                   onClick={() => {
-                    setSearchQuery("dhothi")
+                    setSearchQuery("tissue")
                     document.querySelector('form')?.dispatchEvent(
                       new Event('submit', { cancelable: true, bubbles: true })
                     )
                   }}
                   className="px-3 py-1 bg-amber-50 text-amber-800 rounded-full text-xs hover:bg-amber-100"
                 >
-                  Dhothi
+                  Tissue
                 </button>
                 <button 
                   onClick={() => {
@@ -138,17 +116,6 @@ export function SearchDialog({ children }: SearchDialogProps) {
                   className="px-3 py-1 bg-amber-50 text-amber-800 rounded-full text-xs hover:bg-amber-100"
                 >
                   Fabric
-                </button>
-                <button 
-                  onClick={() => {
-                    setSearchQuery("wedding")
-                    document.querySelector('form')?.dispatchEvent(
-                      new Event('submit', { cancelable: true, bubbles: true })
-                    )
-                  }}
-                  className="px-3 py-1 bg-amber-50 text-amber-800 rounded-full text-xs hover:bg-amber-100"
-                >
-                  Wedding
                 </button>
               </div>
             </div>
