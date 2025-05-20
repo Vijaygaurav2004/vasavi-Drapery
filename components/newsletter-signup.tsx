@@ -72,7 +72,7 @@ export default function NewsletterSignup() {
         
         <div className="mt-16 text-center">
           <p className="text-sm text-foreground/50">
-            Questions? Contact us at <a href="mailto:info@vasthrika.com" className="hover:text-primary-foreground transition-colors">info@vasthrika.com</a>
+            Questions? Contact us at <a href="mailto:vasthrikabyvasavi@gmail.com" className="hover:text-primary-foreground transition-colors">vasthrikabyvasavi@gmail.com</a>
           </p>
         </div>
       </div>

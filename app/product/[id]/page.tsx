@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useRef, useEffect } from "react"
+import React, { useState, useRef, useEffect, useMemo } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { Minus, Plus, ShoppingCart, Heart, Share2, ChevronRight, Truck, ShieldCheck, Award } from "lucide-react"
@@ -13,6 +13,7 @@ import { useCart } from '@/app/context/cart-context'
 import { useWishlist } from '@/app/context/wishlist-context'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { ColorVariant } from "@/types/product"
 
 export default function ProductPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = React.use(params);
@@ -29,9 +30,30 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
   const [selectedImage, setSelectedImage] = useState(0);
   const [isZoomed, setIsZoomed] = useState(false);
   const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
+  const [selectedColorVariant, setSelectedColorVariant] = useState<number | null>(null);
   
   // Refs after state declarations
   const imageRef = useRef<HTMLDivElement>(null);
+  
+  // Move the useMemo hook up here with the other hooks to maintain consistent hook order
+  // Get the current images to display based on whether we're using color variants
+  const displayImages = useMemo(() => {
+    if (!product) return [];
+    
+    if (product.hasColorVariants && product.colorVariants && product.colorVariants.length > 0 && selectedColorVariant !== null) {
+      const variantImages = product.colorVariants[selectedColorVariant]?.images;
+      
+      // Make sure variant images is an array and not empty
+      if (Array.isArray(variantImages) && variantImages.length > 0) {
+        console.log("Using variant images:", variantImages);
+        return variantImages;
+      }
+    }
+    
+    // Fallback to product images or empty array
+    console.log("Using default product images:", product.images);
+    return Array.isArray(product.images) ? product.images : [];
+  }, [product, selectedColorVariant]);
   
   // Load product data
   useEffect(() => {
@@ -39,7 +61,29 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
       try {
         setLoading(true);
         const productData = await getProduct(id);
+        
+        // Handle colorVariants if they exist but are in string format
+        if (productData.colorVariants && typeof productData.colorVariants === 'string') {
+          try {
+            productData.colorVariants = JSON.parse(productData.colorVariants);
+            console.log("Parsed colorVariants from string:", productData.colorVariants);
+          } catch (e) {
+            console.error("Error parsing colorVariants:", e);
+            productData.colorVariants = [];
+          }
+        }
+        
+        console.log("Product data:", productData);
+        console.log("Has color variants:", productData.hasColorVariants);
+        console.log("Color variants:", productData.colorVariants);
+        
         setProduct(productData);
+        
+        // Initialize selected color variant if product has color variants
+        if (productData.hasColorVariants && productData.colorVariants && productData.colorVariants.length > 0) {
+          console.log("Setting initial color variant");
+          setSelectedColorVariant(0);
+        }
       } catch (error) {
         console.error("Error loading product:", error);
         toast({
@@ -77,6 +121,11 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
     );
   }
   
+  // Get the current stock based on whether we're using color variants
+  const currentStock = product.hasColorVariants && product.colorVariants && selectedColorVariant !== null
+    ? product.colorVariants[selectedColorVariant].stock
+    : product.stock;
+  
   // Calculate prices and discounts
   const discountedPrice = product.discountedPrice || product.price;
   const originalPrice = product.originalPrice || product.price;
@@ -90,13 +139,18 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
   }
 
   const increaseQuantity = () => {
-    if (quantity < product.stock) {
+    if (quantity < currentStock) {
       setQuantity(quantity + 1);
     }
   }
+  
+  const handleColorVariantChange = (index: number) => {
+    setSelectedColorVariant(index);
+    setSelectedImage(0); // Reset selected image when changing color variant
+  }
 
   const handleAddToCart = () => {
-    if (quantity > 0 && product.stock > 0) {
+    if (quantity > 0 && currentStock > 0) {
       setAddingToCart(true);
       
       // Simulate API request delay
@@ -295,7 +349,9 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
               {product.category}
             </Link>
             <ChevronRight className="w-4 h-4" />
-            <span className="text-foreground">{product.name}</span>
+            <Link href={`/products/${product.id}`} className="hover:text-primary transition-colors">
+              {product.name}
+            </Link>
           </div>
         </div>
         
@@ -316,7 +372,9 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
             >
               <div className="relative aspect-square gallery-effect cursor-zoom-in">
                 <Image
-                  src={product.images && product.images.length > 0 ? product.images[selectedImage] : "/placeholder-image.jpg"}
+                  src={displayImages && displayImages.length > 0 && displayImages[selectedImage] 
+                    ? displayImages[selectedImage] 
+                    : "/placeholder-image.jpg"}
                   alt={product.name}
                   fill
                   priority
@@ -342,7 +400,7 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
               </div>
             </div>
             <div className="grid grid-cols-4 gap-4">
-              {product.images && product.images.map((image: string, index: number) => (
+              {displayImages && displayImages.length > 0 ? displayImages.map((image: string, index: number) => (
                 <button
                   key={index}
                   onClick={() => setSelectedImage(index)}
@@ -353,13 +411,17 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
                   }`}
                 >
                   <Image
-                    src={image}
+                    src={image || "/placeholder-image.jpg"}
                     alt={`${product.name} - View ${index + 1}`}
                     fill
                     className="object-cover"
                   />
                 </button>
-              ))}
+              )) : (
+                <div className="col-span-4 text-center py-4 text-foreground/60">
+                  No product images available
+                </div>
+              )}
             </div>
           </div>
 
@@ -367,31 +429,6 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
           <div className="space-y-8">
             <div>
               <h1 className="text-3xl md:text-4xl mb-4 elegant-heading">{product.name}</h1>
-              
-              <div className="flex items-center gap-4 mb-6">
-                <div className="flex">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <svg 
-                      key={i}
-                      xmlns="http://www.w3.org/2000/svg" 
-                      width="16" 
-                      height="16" 
-                      viewBox="0 0 24 24" 
-                      fill={i < Math.floor(product.reviews?.average || 4.5) ? "currentColor" : "none"} 
-                      stroke="currentColor" 
-                      strokeWidth="2" 
-                      strokeLinecap="round" 
-                      strokeLinejoin="round" 
-                      className={i < Math.floor(product.reviews?.average || 4.5) ? "text-primary" : "text-foreground/20"}
-                    >
-                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                    </svg>
-                  ))}
-                </div>
-                <span className="text-sm text-foreground/70">
-                  {product.reviews?.average || 4.5} stars ({product.reviews?.count || 36} reviews)
-                </span>
-              </div>
               
               <p className="text-foreground/70 leading-relaxed mb-6">
                 {product.description}
@@ -403,6 +440,44 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
                   <span className="text-lg text-foreground/50 line-through">₹{originalPrice.toLocaleString()}</span>
                 )}
               </div>
+              
+              {/* Color Variants */}
+              {product.hasColorVariants && product.colorVariants && product.colorVariants.length > 0 && (
+                <div className="mb-8">
+                  <span className="font-medium mb-3 block text-sm uppercase tracking-wide">
+                    Colors
+                  </span>
+                  <div className="flex flex-wrap gap-3">
+                    {product.colorVariants.map((variant: ColorVariant, index: number) => (
+                      <button
+                        key={index}
+                        onClick={() => handleColorVariantChange(index)}
+                        className={`w-12 h-12 rounded-full transition-all ${
+                          selectedColorVariant === index 
+                            ? 'ring-2 ring-offset-2 ring-primary scale-110' 
+                            : 'ring-1 ring-foreground/10 hover:ring-foreground/30'
+                        }`}
+                        style={{ backgroundColor: variant.color }}
+                        title={variant.color}
+                        aria-label={`Select ${variant.color} color`}
+                      >
+                        {selectedColorVariant === index && (
+                          <span className="absolute inset-0 flex items-center justify-center">
+                            <span className="w-2 h-2 bg-white rounded-full shadow-sm"></span>
+                          </span>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                  
+                  {/* Show current selected variant info */}
+                  {selectedColorVariant !== null && (
+                    <div className="mt-2 text-sm text-foreground/70">
+                      Selected: {product.colorVariants[selectedColorVariant]?.color || 'Unknown'}
+                    </div>
+                  )}
+                </div>
+              )}
               
               <div className="mb-8">
                 <div className="flex gap-6 flex-wrap">
@@ -443,7 +518,7 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
                       value={quantity}
                       onChange={(e) => {
                         const val = parseInt(e.target.value);
-                        if (!isNaN(val) && val > 0 && val <= product.stock) {
+                        if (!isNaN(val) && val > 0 && val <= currentStock) {
                           setQuantity(val);
                         }
                       }}
@@ -452,7 +527,7 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
                     <button 
                       onClick={increaseQuantity}
                       className="w-10 h-10 flex items-center justify-center border-l border-primary/20 text-foreground/50 hover:text-foreground transition-colors disabled:opacity-50"
-                      disabled={quantity >= product.stock}
+                      disabled={quantity >= currentStock}
                     >
                       <Plus size={16} />
                     </button>
@@ -461,15 +536,10 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
                 
                 <div className="w-full md:w-2/3">
                   <span className="font-medium mb-3 block text-sm uppercase tracking-wide">Availability</span>
-                  {product.stock > 5 ? (
+                  {currentStock > 0 ? (
                     <div className="text-emerald-600 flex items-center gap-2">
                       <span className="w-2 h-2 bg-emerald-600 rounded-full inline-block"></span>
                       <span>In Stock</span>
-                    </div>
-                  ) : product.stock > 0 ? (
-                    <div className="text-amber-600 flex items-center gap-2">
-                      <span className="w-2 h-2 bg-amber-600 rounded-full inline-block"></span>
-                      <span>Low Stock ({product.stock} left)</span>
                     </div>
                   ) : (
                     <div className="text-red-600 flex items-center gap-2">
@@ -484,14 +554,14 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
                 <button
                   onClick={handleAddToCart}
                   className="flex-1 luxury-button px-6 py-3 flex items-center justify-center gap-2"
-                  disabled={addingToCart || product.stock <= 0}
+                  disabled={addingToCart || currentStock <= 0}
                 >
                   {addingToCart ? (
                     <span className="loading-spinner"></span>
                   ) : (
                     <>
                       <ShoppingCart size={18} />
-                      <span>{product.stock <= 0 ? 'Out of Stock' : 'Add to Cart'}</span>
+                      <span>{currentStock <= 0 ? 'Out of Stock' : 'Add to Cart'}</span>
                     </>
                   )}
                 </button>
@@ -553,6 +623,41 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
         <div className="mb-24">
           <ProductTabs product={product} />
         </div>
+        
+        {/* Debug information - remove in production */}
+        {product.hasColorVariants && (
+          <div className="mb-12 p-4 border border-red-300 bg-red-50 rounded-md">
+            <h3 className="font-medium mb-2">Debug Information (Remove in Production)</h3>
+            <div>Has color variants: {product.hasColorVariants ? 'Yes' : 'No'}</div>
+            <div>Selected variant index: {selectedColorVariant !== null ? selectedColorVariant : 'None'}</div>
+            <div>Variants count: {product.colorVariants ? product.colorVariants.length : 0}</div>
+            <div>Selected image index: {selectedImage}</div>
+            <div className="mt-2">
+              <strong>Variants data:</strong>
+              <pre className="mt-1 p-2 bg-white/50 overflow-auto text-xs">
+                {JSON.stringify(product.colorVariants, null, 2)}
+              </pre>
+            </div>
+            <div className="mt-2">
+              <strong>DisplayImages array:</strong>
+              <div>Length: {displayImages ? displayImages.length : 0}</div>
+              <pre className="mt-1 p-2 bg-white/50 overflow-auto text-xs">
+                {JSON.stringify(displayImages, null, 2)}
+              </pre>
+            </div>
+            <div className="mt-4 grid grid-cols-4 gap-2">
+              <strong className="col-span-4 mb-1">Actual images:</strong>
+              {displayImages && displayImages.map((src: string, i: number) => (
+                <div key={i} className="border p-1 text-xs">
+                  <div className="relative aspect-square mb-1">
+                    <Image src={src || "/placeholder-image.jpg"} alt={`Debug ${i}`} fill className="object-contain" />
+                  </div>
+                  <div className="truncate">{src ? src.substring(0, 20) + '...' : 'undefined'}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
         
         {/* Related Products */}
         <div>

@@ -21,11 +21,12 @@ export default function CollectionsPage() {
             <div className="collection-card decorated-corners hover-lift">
               <div className="relative overflow-hidden aspect-square">
                 <Image
-                  src="https://www.drapery-silk.com/cdn/shop/files/DIa-Horizontal-Banner1.jpg?v=1728374317"
+                  src="/1.jpg"
                   alt="Women's Collection"
                   fill
                   priority
-                  className="collection-card-image"
+                  className="collection-card-image object-contain"
+                  style={{ objectPosition: "center center" }}
                 />
                 <div className="collection-card-overlay"></div>
                 <div className="collection-card-content p-10">
@@ -47,11 +48,8 @@ export default function CollectionsPage() {
                 Timeless silk sarees and fabric with exquisite craftsmanship, blending tradition with contemporary elegance.
               </p>
               <div className="flex gap-4">
-                <Link href="/collections/kanjivaram" className="drapery-link text-sm uppercase tracking-wider">
-                  Kanjivaram
-                </Link>
-                <Link href="/collections/banarasi" className="drapery-link text-sm uppercase tracking-wider">
-                  Banarasi
+                <Link href="/collections/women" className="drapery-link text-sm uppercase tracking-wider">
+                  EXPLORE
                 </Link>
               </div>
             </div>
@@ -62,7 +60,7 @@ export default function CollectionsPage() {
             <div className="collection-card decorated-corners hover-lift">
               <div className="relative overflow-hidden aspect-square">
                 <Image
-                  src="https://www.drapery-silk.com/cdn/shop/files/DIa-Horizontal-Banner1.jpg?v=1728374317"
+                  src="/men.jpeg"
                   alt="Men's Collection"
                   fill
                   className="collection-card-image"
@@ -87,11 +85,8 @@ export default function CollectionsPage() {
                 Sophisticated dhothis and premium fabrics crafted with precision, offering both comfort and elegance.
               </p>
               <div className="flex gap-4">
-                <Link href="/collections/ceremonial" className="drapery-link text-sm uppercase tracking-wider">
-                  Ceremonial
-                </Link>
-                <Link href="/collections/wedding" className="drapery-link text-sm uppercase tracking-wider">
-                  Wedding
+                <Link href="/collections/men" className="drapery-link text-sm uppercase tracking-wider">
+                  EXPLORE
                 </Link>
               </div>
             </div>

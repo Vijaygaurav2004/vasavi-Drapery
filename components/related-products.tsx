@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from "next/link"
 import Image from "next/image"
 import { ShoppingCart, Heart, ChevronLeft, ChevronRight, X } from "lucide-react"
@@ -8,34 +8,8 @@ import { useToast } from "@/components/ui/use-toast"
 import { motion, AnimatePresence } from "framer-motion"
 import { useCart } from '@/app/context/cart-context'
 import { useWishlist } from '@/app/context/wishlist-context'
-
-// Sample related products - in a real app, this would come from an API based on the current product
-const relatedProducts = [
-  {
-    id: "2",
-    name: "Banarasi Silk in Crimson Red",
-    description: "Opulent brocade with silver and gold threadwork",
-    price: 38900,
-    images: ["https://www.drapery-silk.com/cdn/shop/files/DIa-Horizontal-Banner1.jpg?v=1728374317"],
-    stock: 3
-  },
-  {
-    id: "3",
-    name: "Tussar Silk with Gold Embroidery",
-    description: "Lightweight silk with handcrafted embroidery",
-    price: 29500,
-    images: ["https://www.drapery-silk.com/cdn/shop/files/DIa-Horizontal-Banner1.jpg?v=1728374317"],
-    stock: 8
-  },
-  {
-    id: "4",
-    name: "Patola Silk in Emerald Green",
-    description: "Double ikat weaving with geometric patterns",
-    price: 45200,
-    images: ["https://www.drapery-silk.com/cdn/shop/files/DIa-Horizontal-Banner1.jpg?v=1728374317"],
-    stock: 2
-  }
-]
+import { getRandomProducts } from '@/lib/supabase/products'
+import { Product } from '@/types/product'
 
 interface RelatedProductsProps {
   productId: string;
@@ -136,7 +110,7 @@ function QuickView({ product, onClose }: { product: any, onClose: () => void }) 
               >
                 <Heart 
                   size={18} 
-                  className={isInWishlist(product.id) ? "fill-red-500 text-red-500" : ""}
+                  className={product.id && isInWishlist(product.id) ? "fill-red-500 text-red-500" : ""}
                 />
               </button>
               
@@ -164,19 +138,39 @@ export default function RelatedProducts({ productId }: RelatedProductsProps) {
   const { addToWishlist, isInWishlist } = useWishlist();
   const [addingToCart, setAddingToCart] = useState<string | null>(null);
   const [quickViewProduct, setQuickViewProduct] = useState<any | null>(null);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
   
-  // In a real app, this would filter out the current product
-  const filteredProducts = relatedProducts.filter(product => product.id !== productId);
+  useEffect(() => {
+    async function loadRandomProducts() {
+      try {
+        setLoading(true);
+        const randomProducts = await getRandomProducts(3, productId);
+        setProducts(randomProducts);
+      } catch (error) {
+        console.error("Error loading random products:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load related products",
+          variant: "destructive"
+        });
+      } finally {
+        setLoading(false);
+      }
+    }
+    
+    loadRandomProducts();
+  }, [productId, toast]);
   
-  const handleAddToCart = (product: any) => {
-    setAddingToCart(product.id);
+  const handleAddToCart = (product: Product) => {
+    setAddingToCart(product.id || null);
     
     // Add to cart with the cart context
     addToCart({
-      id: product.id,
+      id: product.id || '',
       name: product.name,
       price: product.price,
-      image: product.images[0],
+      image: product.images?.[0] || '/placeholder.svg',
       quantity: 1
     });
     
@@ -186,22 +180,22 @@ export default function RelatedProducts({ productId }: RelatedProductsProps) {
     }, 800);
   }
   
-  const handleAddToWishlist = (e: React.MouseEvent, product: any) => {
+  const handleAddToWishlist = (e: React.MouseEvent, product: Product) => {
     e.preventDefault();
     e.stopPropagation();
     
     // Use setTimeout to avoid state updates during render
     setTimeout(() => {
       addToWishlist({
-        id: product.id,
+        id: product.id || '',
         name: product.name,
         price: product.price,
-        images: product.images
+        images: product.images || []
       });
     }, 0);
   }
   
-  const handleQuickView = (e: React.MouseEvent, product: any) => {
+  const handleQuickView = (e: React.MouseEvent, product: Product) => {
     e.preventDefault();
     e.stopPropagation();
     setQuickViewProduct(product);
@@ -211,11 +205,25 @@ export default function RelatedProducts({ productId }: RelatedProductsProps) {
     window.location.href = `/product/${productId}`;
   }
   
+  if (loading) {
+    return (
+      <div className="text-center py-12">
+        <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary mb-4"></div>
+        <p className="text-foreground/70">Loading suggestions...</p>
+      </div>
+    );
+  }
+  
+  if (products.length === 0) {
+    return null;
+  }
+  
   return (
     <>
+      <h2 className="text-3xl font-medium mb-8 text-center elegant-heading">You May Also Like</h2>
       <div className="relative">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {filteredProducts.map((product) => (
+          {products.map((product) => (
             <motion.div 
               key={product.id}
               initial={{ opacity: 0, y: 20 }}
@@ -224,9 +232,9 @@ export default function RelatedProducts({ productId }: RelatedProductsProps) {
               viewport={{ once: true }}
               className="product-card luxury-card border border-primary/10 decorated-corners overflow-hidden group hover-lift"
             >
-              <div className="relative aspect-[3/4] overflow-hidden cursor-pointer" onClick={() => handleProductClick(product.id)}>
+              <div className="relative aspect-[3/4] overflow-hidden cursor-pointer" onClick={() => product.id ? handleProductClick(product.id) : null}>
                 <Image
-                  src={product.images[0]}
+                  src={product.images?.[0] || "/placeholder.svg"}
                   alt={product.name}
                   fill
                   className="object-cover transition-transform duration-700 group-hover:scale-110"
@@ -244,7 +252,7 @@ export default function RelatedProducts({ productId }: RelatedProductsProps) {
               <div className="p-6">
                 <h3 
                   className="text-xl font-medium mb-2 hover:text-primary transition-colors elegant-heading cursor-pointer" 
-                  onClick={() => handleProductClick(product.id)}
+                  onClick={() => product.id ? handleProductClick(product.id) : null}
                 >
                   {product.name}
                 </h3>
@@ -276,7 +284,7 @@ export default function RelatedProducts({ productId }: RelatedProductsProps) {
                   >
                     <Heart 
                       size={18} 
-                      className={isInWishlist(product.id) ? "fill-red-500 text-red-500" : ""}
+                      className={product.id && isInWishlist(product.id) ? "fill-red-500 text-red-500" : ""}
                     />
                   </button>
                 </div>
@@ -284,23 +292,23 @@ export default function RelatedProducts({ productId }: RelatedProductsProps) {
             </motion.div>
           ))}
         </div>
+        
+        <AnimatePresence>
+          {quickViewProduct && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              <QuickView 
+                product={quickViewProduct} 
+                onClose={() => setQuickViewProduct(null)}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
-      
-      <AnimatePresence>
-        {quickViewProduct && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-          >
-            <QuickView 
-              product={quickViewProduct} 
-              onClose={() => setQuickViewProduct(null)}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
     </>
   )
 }

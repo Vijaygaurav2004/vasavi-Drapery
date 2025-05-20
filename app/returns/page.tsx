@@ -39,7 +39,7 @@ export default function ReturnsPage() {
                 <ul className="list-disc pl-6 space-y-2">
                   <li>Returns are accepted within 48 hours of delivery only if the product is damaged or defective.</li>
                   <li>The product must be unused, unworn, and in its original packaging with all tags intact.</li>
-                  <li>For valid returns, please email our customer care at support@vasthrika.com with clear photos of the issue.</li>
+                  <li>For valid returns, please email our customer care at vasthrikabyvasavi@gmail.com with clear photos of the issue.</li>
                   <li>The final decision on return acceptance rests with Vasthrika's quality assurance team.</li>
                 </ul>
 
@@ -67,8 +67,7 @@ export default function ReturnsPage() {
                   cancelled once processing has begun.
                 </p>
                 <ul className="list-disc pl-6 space-y-2">
-                  <li>Orders can only be cancelled within 2 hours of placement, subject to processing status.</li>
-                  <li>For urgent cancellation requests, please contact our support team at +91 98765 43210 or email support@vasthrika.com</li>
+                  <li>For urgent cancellation requests, please contact our support team at email vasthrikabyvasavi@gmail.com</li>
                   <li>If the order has already been shipped, cancellation requests cannot be accommodated.</li>
                 </ul>
               </div>
@@ -82,8 +81,7 @@ export default function ReturnsPage() {
                   questions regarding returns or cancellations.
                 </p>
                 <div className="mt-4 space-y-2">
-                  <p className="text-foreground/80">Email: support@vasthrika.com</p>
-                  <p className="text-foreground/80">Phone: +91 98765 43210</p>
+                  <p className="text-foreground/80">Email: vasthrikabyvasavi@gmail.com</p>
                 </div>
               </div>
             </section>
@@ -91,14 +89,14 @@ export default function ReturnsPage() {
             <section className="mt-12">
               <h2 className="text-2xl font-bold mb-4 elegant-heading silk-text-gradient">Important Notes</h2>
               <ul className="list-disc pl-5 text-foreground/80 space-y-2">
-                <li className="mb-2">We recommend carefully reviewing the product description, images, and videos before making a purchase. Slight color variations may occur due to screen settings or photography lighting.</li>
+                <li className="mb-2">We recommend carefully reviewing the product description and images before making a purchase. Slight color variations may occur due to screen settings or photography lighting.</li>
                 <li className="mb-2">Our team performs a thorough quality check before dispatching any order.</li>
                 <li className="mb-2">Return shipping costs are the responsibility of the customer unless the return is due to a manufacturing defect or an error on our part.</li>
                 <li className="mb-2">We are not responsible for items damaged or lost during return transit. Please use a reliable courier service with tracking.</li>
                 <li className="mb-2">Exchanges must be initiated within 7 days of receiving your order.</li>
-                <li className="mb-2">The saree must be unused, unwashed, and in its original condition with all tags attached.</li>
-                <li className="mb-2">Sarees with fall and edging work done are considered customized and are not eligible for return or exchange unless there is a manufacturing defect.</li>
-                <li className="mb-2">Sarees purchased during sale periods or with promotional discounts are final sale and cannot be returned or exchanged.</li>
+                <li className="mb-2">The product must be unused, unwashed, and in its original condition with all tags attached.</li>
+                <li className="mb-2">Products with fall and edging work done are considered customized and are not eligible for return or exchange unless there is a manufacturing defect.</li>
+                <li className="mb-2">Products purchased during sale periods or with promotional discounts are final sale and cannot be returned or exchanged.</li>
               </ul>
             </section>
           </div>

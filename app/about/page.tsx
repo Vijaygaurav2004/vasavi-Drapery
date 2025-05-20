@@ -26,13 +26,14 @@ export default function AboutPage() {
             <div className="relative decorated-corners fade-in" style={{animationDelay: '0.4s'}}>
               <div className="relative overflow-hidden aspect-[4/5] shadow-xl gold-shimmer">
                 <Image
-                  src="https://www.drapery-silk.com/cdn/shop/files/DIa-Horizontal-Banner1.jpg?v=1728374317"
-                  alt="Silk artisans at work"
+                  src="/1a.jpg"
+                  alt="Elegant Silk Saree"
                   fill
-                  className="object-cover"
+                  className="object-contain"
+                  style={{ objectPosition: "center center" }}
                   priority
                 />
-                <div className="absolute inset-0 bg-gradient-to-tr from-foreground/10 to-transparent"></div>
+                <div className="absolute inset-0 bg-gradient-to-tr from-foreground/5 to-transparent"></div>
               </div>
             </div>
           </div>

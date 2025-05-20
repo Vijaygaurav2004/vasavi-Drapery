@@ -4,7 +4,8 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { useSearchParams } from "next/navigation"
-import { getProducts, Product } from "@/lib/supabase/products"
+import { getProducts } from "@/lib/supabase/products"
+import { Product } from "@/types/product"
 import { ShoppingCart, Filter } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useCart } from "@/app/context/cart-context"
@@ -126,19 +127,14 @@ export default function SearchResultsPage() {
                         src={product.images?.[0] || "/placeholder.svg"}
                         alt={product.name}
                         fill
-                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                        className="object-cover transition-transform duration-700 group-hover:scale-110"
                       />
-                      
-                      {product.stock <= 3 && product.stock > 0 && (
-                        <div className="absolute top-2 right-2 bg-amber-500 px-2 py-1 text-white text-xs rounded-sm">
-                          Low Stock
-                        </div>
-                      )}
                       {product.stock <= 0 && (
-                        <div className="absolute top-2 right-2 bg-red-500 px-2 py-1 text-white text-xs rounded-sm">
+                        <div className="absolute top-4 right-4 bg-red-500 px-3 py-1 text-white text-xs uppercase tracking-wider font-medium">
                           Sold Out
                         </div>
                       )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     </div>
                   </Link>
                   

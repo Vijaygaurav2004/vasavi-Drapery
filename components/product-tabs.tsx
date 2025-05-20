@@ -13,10 +13,6 @@ interface ProductTabsProps {
     dimensions: string;
     productDetails?: string[];
     artisanStory?: string;
-    reviews?: {
-      average: number;
-      count: number;
-    };
   };
 }
 
@@ -172,134 +168,6 @@ export default function ProductTabs({ product }: ProductTabsProps) {
         </div>
       </div>
     ),
-    
-    reviews: (
-      <div className="max-w-3xl mx-auto">
-        <div className="flex flex-col md:flex-row justify-between items-center mb-8">
-          <div>
-            <h3 className="text-xl uppercase tracking-wider font-light elegant-heading">Customer Reviews</h3>
-            <div className="flex items-center gap-2 mt-2">
-              <div className="flex">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <svg 
-                    key={i}
-                    xmlns="http://www.w3.org/2000/svg" 
-                    width="16" 
-                    height="16" 
-                    viewBox="0 0 24 24" 
-                    fill={i < Math.floor(product.reviews?.average || 0) ? "currentColor" : "none"} 
-                    stroke="currentColor" 
-                    strokeWidth="2" 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round" 
-                    className={i < Math.floor(product.reviews?.average || 0) ? "text-primary" : "text-foreground/20"}
-                  >
-                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                  </svg>
-                ))}
-              </div>
-              <span className="text-sm text-foreground/70">
-                Based on {product.reviews?.count || 0} reviews
-              </span>
-            </div>
-          </div>
-          
-          <button className="luxury-button mt-4 md:mt-0">
-            Write a Review
-          </button>
-        </div>
-        
-        <div className="space-y-6">
-          {/* Sample reviews - would come from API in real app */}
-          <div className="border-b border-primary/10 pb-6">
-            <div className="flex justify-between mb-2">
-              <h4 className="font-medium">Anjali Mehta</h4>
-              <span className="text-foreground/50 text-sm">2 months ago</span>
-            </div>
-            <div className="flex mb-3">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <svg 
-                  key={i}
-                  xmlns="http://www.w3.org/2000/svg" 
-                  width="14" 
-                  height="14" 
-                  viewBox="0 0 24 24" 
-                  fill={i < 5 ? "currentColor" : "none"} 
-                  stroke="currentColor" 
-                  strokeWidth="2" 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  className={i < 5 ? "text-primary" : "text-foreground/20"}
-                >
-                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                </svg>
-              ))}
-            </div>
-            <p className="text-foreground/70">
-              I purchased this saree for my daughter's wedding and was amazed by the quality. The silk is rich and luxurious, and the gold zari work caught everyone's attention. Worth every penny spent!
-            </p>
-          </div>
-          
-          <div className="border-b border-primary/10 pb-6">
-            <div className="flex justify-between mb-2">
-              <h4 className="font-medium">Priya Sharma</h4>
-              <span className="text-foreground/50 text-sm">3 months ago</span>
-            </div>
-            <div className="flex mb-3">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <svg 
-                  key={i}
-                  xmlns="http://www.w3.org/2000/svg" 
-                  width="14" 
-                  height="14" 
-                  viewBox="0 0 24 24" 
-                  fill={i < 5 ? "currentColor" : "none"} 
-                  stroke="currentColor" 
-                  strokeWidth="2" 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  className={i < 5 ? "text-primary" : "text-foreground/20"}
-                >
-                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                </svg>
-              ))}
-            </div>
-            <p className="text-foreground/70">
-              As someone who appreciates fine craftsmanship, I can say that this saree is truly exceptional. The attention to detail in the motifs and the quality of the silk is outstanding. Shipping was prompt, and it came beautifully packaged.
-            </p>
-          </div>
-          
-          <div>
-            <div className="flex justify-between mb-2">
-              <h4 className="font-medium">Rajiv Patel</h4>
-              <span className="text-foreground/50 text-sm">5 months ago</span>
-            </div>
-            <div className="flex mb-3">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <svg 
-                  key={i}
-                  xmlns="http://www.w3.org/2000/svg" 
-                  width="14" 
-                  height="14" 
-                  viewBox="0 0 24 24" 
-                  fill={i < 4 ? "currentColor" : "none"} 
-                  stroke="currentColor" 
-                  strokeWidth="2" 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  className={i < 4 ? "text-primary" : "text-foreground/20"}
-                >
-                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                </svg>
-              ))}
-            </div>
-            <p className="text-foreground/70">
-              Purchased this as an anniversary gift for my wife. She loved the rich color and the traditional design. The certificate of authenticity was a nice touch that shows the brand's commitment to quality. Would have given 5 stars but shipping took a bit longer than expected.
-            </p>
-          </div>
-        </div>
-      </div>
-    ),
   }
   
   return (
@@ -335,16 +203,6 @@ export default function ProductTabs({ product }: ProductTabsProps) {
             onClick={() => setActiveTab("shipping")}
           >
             Shipping & Returns
-          </button>
-          <button 
-            className={`inline-block px-8 py-4 text-sm uppercase tracking-wider border-b-2 font-medium transition-colors ${
-              activeTab === "reviews" 
-                ? "border-primary text-foreground" 
-                : "border-transparent text-foreground/70 hover:text-foreground hover:border-primary/20"
-            }`}
-            onClick={() => setActiveTab("reviews")}
-          >
-            Reviews
           </button>
         </div>
       </div>

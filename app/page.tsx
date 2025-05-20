@@ -4,7 +4,7 @@ import TestimonialCarousel from '@/components/testimonial-carousel'
 import { Award, ShieldCheck, Truck, ArrowRight } from "lucide-react"
 import { Button } from "../components/ui/button"
 import FeaturedProducts from "../components/featured-products"
-import ImageGallery from "../components/image-gallery"
+
 
 export default function Home() {
   return (
@@ -42,7 +42,7 @@ export default function Home() {
             <div className="hidden md:block h-full flex items-center justify-end">
               <div className="relative h-[80vh] w-full max-w-md decorated-corners gold-shimmer">
                 <Image
-                  src="https://www.drapery-silk.com/cdn/shop/files/DIa-Horizontal-Banner1.jpg?v=1728374317"
+                  src="/pink-saree.jpg"
                   alt="Luxury Silk Saree"
                   fill
                   priority
@@ -59,7 +59,7 @@ export default function Home() {
       <div className="md:hidden -mt-16 relative z-20 px-4">
         <div className="relative aspect-[4/5] overflow-hidden decorated-corners shadow-lg">
           <Image
-            src="https://www.drapery-silk.com/cdn/shop/files/DIa-Horizontal-Banner1.jpg?v=1728374317"
+            src="/pink-saree.jpg"
             alt="Luxury Silk Saree"
             fill
             priority
@@ -92,10 +92,11 @@ export default function Home() {
               <Link href="/collections/women" className="block">
                 <div className="relative overflow-hidden aspect-square">
                   <Image
-                    src="https://www.drapery-silk.com/cdn/shop/files/DIa-Horizontal-Banner1.jpg?v=1728374317"
+                    src="/1.jpg"
                     alt="Women's Collection"
                     fill
-                    className="collection-card-image"
+                    className="collection-card-image object-contain"
+                    style={{ objectPosition: "center center" }}
                   />
                   <div className="collection-card-overlay"></div>
                 </div>
@@ -111,7 +112,7 @@ export default function Home() {
               <Link href="/collections/men" className="block">
                 <div className="relative overflow-hidden aspect-square">
                   <Image
-                    src="https://www.drapery-silk.com/cdn/shop/files/DIa-Horizontal-Banner1.jpg?v=1728374317"
+                    src="/men.jpeg"
                     alt="Men's Collection"
                     fill
                     className="collection-card-image"
@@ -177,7 +178,7 @@ export default function Home() {
             <div className="order-1 md:order-2 relative">
               <div className="relative overflow-hidden aspect-[4/5] decorated-corners shadow-xl gold-shimmer">
                 <Image
-                  src="https://www.drapery-silk.com/cdn/shop/files/DIa-Horizontal-Banner1.jpg?v=1728374317"
+                  src="/pink-saree.jpg"
                   alt="Silk Artisans at Work"
                   fill
                   className="object-cover"
@@ -245,32 +246,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Instagram Gallery Section */}
-      <section className="py-20 bg-white">
-        <div className="container">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl elegant-heading uppercase tracking-wider">Follow Our Journey</h2>
-            <div className="w-20 h-px bg-primary mx-auto my-6"></div>
-            <p className="text-foreground/70 max-w-2xl mx-auto">
-              Join us on Instagram and discover the artistry behind our collections and the stories of our artisans.
-            </p>
-          </div>
-          
-          <ImageGallery />
-          
-          <div className="text-center mt-12">
-            <a 
-              href="https://instagram.com" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="luxury-button inline-flex items-center group"
-            >
-              <span>Follow @vasthrikasilks</span>
-              <ArrowRight className="ml-2 w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
-            </a>
-          </div>
-        </div>
-      </section>
 
       {/* Our Promise Section */}
       <section className="py-20 bg-white">

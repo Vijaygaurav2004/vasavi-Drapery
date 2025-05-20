@@ -6,7 +6,8 @@ import Image from "next/image"
 import { ShoppingCart, X, ChevronDown, CheckIcon, ArrowUpDown, Filter, Search } from "lucide-react"
 import { useToast } from "@/components/ui/use-toast"
 import { useCart } from "@/app/context/cart-context"
-import { getProducts, Product } from "@/lib/supabase/products"
+import { getProducts } from "@/lib/supabase/products"
+import { Product } from "@/types/product"
 import { Slider } from "@/components/ui/slider"
 import { Input } from "@/components/ui/input"
 import {
@@ -186,7 +187,7 @@ export default function MensCollectionPage() {
   }
 
   const handleAddToCart = async (product: Product) => {
-    setAddingToCart(product.id)
+    setAddingToCart(product.id || null)
     
     try {
       // Add to cart
@@ -458,17 +459,11 @@ export default function MensCollectionPage() {
                   <Link href={`/product/${product.id}`} className="block">
                     <div className="relative aspect-[3/4] overflow-hidden">
                       <Image
-                        src={product.images && product.images.length > 0 ? product.images[0] : "/placeholder-image.jpg"}
+                        src={product.images?.[0] || "/placeholder.svg"}
                         alt={product.name}
                         fill
                         className="object-cover transition-transform duration-700 group-hover:scale-110"
                       />
-                      {/* Replaced product.label with stock status indicator */}
-                      {product.stock <= 3 && product.stock > 0 && (
-                        <div className="absolute top-4 right-4 bg-amber-500 px-3 py-1 text-white text-xs uppercase tracking-wider font-medium">
-                          Low Stock
-                        </div>
-                      )}
                       {product.stock <= 0 && (
                         <div className="absolute top-4 right-4 bg-red-500 px-3 py-1 text-white text-xs uppercase tracking-wider font-medium">
                           Sold Out

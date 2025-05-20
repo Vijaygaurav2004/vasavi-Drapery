@@ -101,9 +101,11 @@ export default function CartPage() {
               <span>Total</span>
               <span>₹{cartTotal.toLocaleString()}</span>
             </div>
-            <Button className="w-full bg-black hover:bg-amber-900 text-white">
-              Proceed to Checkout
-            </Button>
+            <Link href="/checkout">
+              <Button className="w-full bg-black hover:bg-amber-900 text-white">
+                Proceed to Checkout
+              </Button>
+            </Link>
           </div>
         </div>
       </div>

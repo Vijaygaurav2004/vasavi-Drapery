@@ -7,7 +7,8 @@ import Image from "next/image"
 import { ShoppingCart, X, ChevronDown, CheckIcon, ArrowUpDown, Filter, Search } from "lucide-react"
 import { useToast } from "@/components/ui/use-toast"
 import { useCart } from "@/app/context/cart-context"
-import { getProducts, Product } from "@/lib/supabase/products"
+import { getProducts } from "@/lib/supabase/products"
+import { Product } from "@/types/product"
 import { Slider } from "@/components/ui/slider"
 import { Input } from "@/components/ui/input"
 import {
@@ -181,7 +182,7 @@ export default function WomensCollectionPage() {
   }, [products, selectedCategory, selectedColors, priceRange, sortOption, maxPrice, searchQuery])
 
   const handleAddToCart = async (product: Product) => {
-    setAddingToCart(product.id)
+    setAddingToCart(product.id || null)
     try {
       await addToCart({
         id: product.id,
@@ -450,11 +451,6 @@ export default function WomensCollectionPage() {
                         fill
                         className="object-cover transition-transform duration-700 group-hover:scale-110"
                       />
-                      {product.stock <= 3 && product.stock > 0 && (
-                        <div className="absolute top-4 right-4 bg-amber-500 px-3 py-1 text-white text-xs uppercase tracking-wider font-medium">
-                          Low Stock
-                        </div>
-                      )}
                       {product.stock <= 0 && (
                         <div className="absolute top-4 right-4 bg-red-500 px-3 py-1 text-white text-xs uppercase tracking-wider font-medium">
                           Sold Out
