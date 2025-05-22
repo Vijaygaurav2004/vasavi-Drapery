@@ -80,6 +80,12 @@ export default function TermsConditionsPage() {
               </p>
             </section>
 
+            <section className="mb-8 text-center">
+              <p className="text-lg font-medium text-primary italic">
+                powered by VASAVI HANDLOOMS
+              </p>
+            </section>
+
             <section className="mt-12">
               <div className="bg-amber-50/30 border border-amber-100/30 p-6 rounded-sm">
                 <h3 className="text-xl font-medium mb-4">Contact Us</h3>

@@ -34,8 +34,7 @@ import { Badge } from "@/components/ui/badge"
 const categories = [
   { id: "all", name: "All Products" },
   { id: "silk", name: "Silk" },
-  { id: "tissue", name: "Tissue" },
-  { id: "fabric", name: "Fabric" }
+  { id: "tissue", name: "Tissue" }
 ]
 
 // Colors for filtering

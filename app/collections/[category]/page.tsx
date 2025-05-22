@@ -7,7 +7,8 @@ import Image from "next/image"
 import { ShoppingCart } from "lucide-react"
 import { useToast } from "@/components/ui/use-toast"
 import { useCart } from "@/app/context/cart-context"
-import { getProducts, Product } from "@/lib/supabase/products"
+import { getProducts } from "@/lib/supabase/products"
+import { Product } from "@/types/product"
 
 export default function CategoryPage({ params }: { params: { category: string } }) {
   const { toast } = useToast()
@@ -39,7 +40,7 @@ export default function CategoryPage({ params }: { params: { category: string } 
   }, [category])
 
   const handleAddToCart = (product: Product) => {
-    setAddingToCart(product.id)
+    setAddingToCart(product.id ?? null)
     
     // Simulate API request delay
     setTimeout(() => {
