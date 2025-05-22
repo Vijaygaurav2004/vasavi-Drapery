@@ -51,9 +51,9 @@ export default function ReturnsPage() {
                   <li>Exchange requests are limited to one per order.</li>
                 </ul>
 
-                <h3 className="text-xl font-medium mt-8">Processing Time</h3>
+                <h3 className="text-xl font-medium mt-8">Delivery Time</h3>
                 <p>
-                  For approved returns, refunds or exchanges will be processed within 7-10 business days after receiving 
+                  For approved returns, refunds or exchanges will be delivered within 7-10 business days after receiving 
                   the returned product in its original condition.
                 </p>
               </div>
