@@ -481,7 +481,9 @@ export default function MensCollectionPage() {
                     <Link href={`/product/${product.id}`}>
                       <h3 className="text-xl font-medium mb-2 hover:text-amber-800 transition-colors">{product.name}</h3>
                     </Link>
-                    <p className="text-foreground/70 text-sm mb-4">{product.description}</p>
+                    <p className="text-foreground/70 text-sm mb-4 line-clamp-2">
+                      {product.description.split(/\n+/)[0]}
+                    </p>
                     <div className="text-lg font-medium mb-6">₹{product.price.toLocaleString()}</div>
                     <button
                       onClick={() => handleAddToCart(product)}
@@ -527,7 +529,11 @@ export default function MensCollectionPage() {
               <div>
                 <h2 className="text-2xl font-medium mb-2">{quickViewProduct.name}</h2>
                 <div className="text-xl font-medium text-primary mb-4">₹{quickViewProduct.price.toLocaleString()}</div>
-                <div className="text-foreground/70 mb-6">{quickViewProduct.description}</div>
+                <div className="text-foreground/70 mb-6 space-y-4">
+                  {quickViewProduct.description.split(/\n+/).map((paragraph: string, index: number) => (
+                    <p key={index}>{paragraph}</p>
+                  ))}
+                </div>
                 
                 {quickViewProduct.material && (
                   <div className="mb-4">

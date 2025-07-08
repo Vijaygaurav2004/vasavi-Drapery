@@ -103,13 +103,32 @@ export default function FeaturedProducts() {
 
   const handleAddToCart = (product: Product) => {
     setAddingToCart(product.id!)
-    setTimeout(() => {
+    
+    // Use the cart context to add the product
+    addToCart({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.images?.[0] || "/placeholder.svg",
+      quantity: 1
+    }).then(() => {
       toast({
         title: "Added to cart",
         description: `${product.name} has been added to your shopping cart.`,
       })
+      
+      // Dispatch custom event to update cart count in real-time
+      window.dispatchEvent(new Event('cartUpdated'));
+    }).catch((error) => {
+      console.error('Error adding to cart:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add to cart. Please try again.",
+        variant: "destructive"
+      });
+    }).finally(() => {
       setAddingToCart(null)
-    }, 800)
+    });
   }
 
   const handleAddToWishlist = (e: React.MouseEvent, product: Product) => {
@@ -220,7 +239,9 @@ export default function FeaturedProducts() {
                 <Link href={`/product/${product.id}`}>
                   <h3 className="text-xl font-medium mb-2 hover:text-primary transition-colors elegant-heading">{product.name}</h3>
                 </Link>
-                <p className="text-foreground/70 text-sm mb-4 line-clamp-2">{product.description}</p>
+                <p className="text-foreground/70 text-sm mb-4 line-clamp-2">
+                  {product.description.split(/\n+/)[0]}
+                </p>
                 <div className="flex items-baseline gap-2 mb-6">
                   <span className="text-lg font-medium">
                     ₹{product.discountedPrice ? product.discountedPrice.toLocaleString() : product.price.toLocaleString()}
@@ -329,7 +350,11 @@ export default function FeaturedProducts() {
                     <span className="text-sm text-foreground/50 line-through ml-2">₹{quickViewProduct.price.toLocaleString()}</span>
                   )}
                 </div>
-                <div className="text-foreground/70 mb-6">{quickViewProduct.description}</div>
+                <div className="text-foreground/70 mb-6 space-y-4">
+                  {quickViewProduct.description.split(/\n+/).map((paragraph: string, index: number) => (
+                    <p key={index}>{paragraph}</p>
+                  ))}
+                </div>
                 
                 <div className="mb-6">
                   <span className="font-medium">Availability:</span> {quickViewProduct.stock > 0 ? `In Stock (${quickViewProduct.stock} available)` : 'Out of Stock'}

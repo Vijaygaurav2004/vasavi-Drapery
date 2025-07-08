@@ -13,6 +13,7 @@ interface ProductTabsProps {
     dimensions: string;
     productDetails?: string[];
     artisanStory?: string;
+    details?: string; // Add details field from Supabase
   };
 }
 
@@ -26,7 +27,13 @@ export default function ProductTabs({ product }: ProductTabsProps) {
           <h3 className="text-xl mb-6 uppercase tracking-wider font-light elegant-heading">Product Details</h3>
           <div className="w-16 h-px bg-gradient-to-r from-primary/50 to-transparent mb-6"></div>
           <div className="space-y-4">
-            {product.productDetails ? (
+            {product.details ? (
+              <div className="text-foreground/70 leading-relaxed space-y-4">
+                {product.details.split(/\n+/).map((paragraph: string, index: number) => (
+                  <p key={index}>{paragraph}</p>
+                ))}
+              </div>
+            ) : product.productDetails ? (
               <ul className="space-y-4">
                 {product.productDetails.map((detail, index) => (
                   <li key={index} className="flex items-start gap-3">
@@ -36,9 +43,11 @@ export default function ProductTabs({ product }: ProductTabsProps) {
                 ))}
               </ul>
             ) : (
-              <p className="text-foreground/70 leading-relaxed">
-                {product.description}
-              </p>
+              <div className="text-foreground/70 leading-relaxed space-y-4">
+                {product.description.split(/\n+/).map((paragraph: string, index: number) => (
+                  <p key={index}>{paragraph}</p>
+                ))}
+              </div>
             )}
           </div>
         </div>
@@ -87,35 +96,39 @@ export default function ProductTabs({ product }: ProductTabsProps) {
         <div className="w-20 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent mx-auto mb-8"></div>
         
         <div className="space-y-6">
-          <p className="text-foreground/70 leading-relaxed">
-            {product.careInstructions}
-          </p>
-          
-          <div className="bg-primary/5 p-6 rounded-sm border border-primary/10">
-            <h4 className="font-medium mb-4 elegant-heading">Recommended Care</h4>
-            <ul className="space-y-4">
-              <li className="flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 text-primary/70 mt-0.5 flex-shrink-0" />
-                <span className="text-foreground/70">Always dry clean your silk saree. Look for cleaners who specialize in handling delicate fabrics.</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 text-primary/70 mt-0.5 flex-shrink-0" />
-                <span className="text-foreground/70">Store in a cool, dry place wrapped in a muslin cloth to prevent moisture damage.</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 text-primary/70 mt-0.5 flex-shrink-0" />
-                <span className="text-foreground/70">Avoid prolonged exposure to direct sunlight which can fade the vibrant colors.</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 text-primary/70 mt-0.5 flex-shrink-0" />
-                <span className="text-foreground/70">Refold your silk saree periodically to prevent permanent creasing along fold lines.</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 text-primary/70 mt-0.5 flex-shrink-0" />
-                <span className="text-foreground/70">Use silica gel packets in your storage area to absorb excess moisture.</span>
-              </li>
-            </ul>
-          </div>
+          {product.careInstructions ? (
+            <div className="text-foreground/70 leading-relaxed space-y-4">
+              {product.careInstructions.split(/\n+/).map((paragraph: string, index: number) => (
+                <p key={index}>{paragraph}</p>
+              ))}
+            </div>
+          ) : (
+            <div className="bg-primary/5 p-6 rounded-sm border border-primary/10">
+              <h4 className="font-medium mb-4 elegant-heading">Recommended Care</h4>
+              <ul className="space-y-4">
+                <li className="flex items-start gap-3">
+                  <CheckCircle className="w-5 h-5 text-primary/70 mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground/70">Dry Clean Only – To maintain the shine, texture, and longevity of the silk, we strongly recommend professional dry cleaning.</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle className="w-5 h-5 text-primary/70 mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground/70">Avoid Machine Wash – Do not wash in a washing machine.</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle className="w-5 h-5 text-primary/70 mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground/70">Store with Care – Keep the saree in a muslin cloth to allow the fabric to breathe. Avoid plastic covers.</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle className="w-5 h-5 text-primary/70 mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground/70">Ironing – Use only a low-heat iron or steam press from the reverse side.</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle className="w-5 h-5 text-primary/70 mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground/70">These steps will help preserve the natural beauty and elegance of your pure silk saree for years to come.</span>
+                </li>
+              </ul>
+            </div>
+          )}
         </div>
       </div>
     ),

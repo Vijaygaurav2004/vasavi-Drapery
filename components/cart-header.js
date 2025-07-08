@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion"
 
 export default function CartHeader() {
   const { cartCount } = useCart()
+  console.log("CartHeader rendering with cartCount:", cartCount);
 
   return (
     <Link 

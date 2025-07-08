@@ -39,25 +39,32 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   // Load cart from localStorage on mount
   useEffect(() => {
-    const savedCart = localStorage.getItem('cart');
-    if (savedCart) {
-      try {
-        setItems(JSON.parse(savedCart));
-      } catch (e) {
-        console.error('Failed to parse cart from localStorage:', e);
+    try {
+      const savedCart = localStorage.getItem('cart');
+      console.log("Loading cart from localStorage:", savedCart);
+      
+      if (savedCart) {
+        const parsedCart = JSON.parse(savedCart);
+        console.log("Parsed cart:", parsedCart);
+        setItems(parsedCart);
       }
+    } catch (e) {
+      console.error('Failed to parse cart from localStorage:', e);
     }
   }, []);
 
   // Save cart to localStorage whenever it changes
   useEffect(() => {
+    console.log("Saving cart to localStorage:", items);
     localStorage.setItem('cart', JSON.stringify(items));
   }, [items]);
 
   const addToCart = async (product: any) => {
     // First check if the product is still in stock
     try {
+      console.log("Cart context addToCart called with:", product);
       const { inStock, stock } = await checkProductStock(product.id);
+      console.log("Stock check result:", { inStock, stock });
       
       if (!inStock) {
         toast({
@@ -68,13 +75,18 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         return;
       }
       
+      // Get the quantity to add (default to 1 if not provided)
+      const quantityToAdd = product.quantity || 1;
+      console.log("Quantity to add:", quantityToAdd);
+      
       // Continue with existing add to cart logic...
       setItems(currentItems => {
         const existingItem = currentItems.find(item => item.id === product.id);
+        console.log("Existing item in cart:", existingItem);
         
         if (existingItem) {
           // Check if adding more would exceed available stock
-          if (existingItem.quantity + 1 > stock) {
+          if (existingItem.quantity + quantityToAdd > stock) {
             toast({
               title: "Stock Limit Reached",
               description: `Sorry, only ${stock} items available in stock.`,
@@ -83,21 +95,31 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             return currentItems;
           }
           
-          return currentItems.map(item =>
+          const updatedItems = currentItems.map(item =>
             item.id === product.id
-              ? { ...item, quantity: item.quantity + 1 }
+              ? { ...item, quantity: item.quantity + quantityToAdd }
               : item
           );
+          console.log("Updated cart items:", updatedItems);
+          return updatedItems;
         }
         
-        return [...currentItems, {
+        const newItems = [...currentItems, {
           id: product.id,
           name: product.name,
           price: product.price,
           image: product.image,
-          quantity: 1
+          quantity: quantityToAdd
         }];
+        console.log("New cart items:", newItems);
+        return newItems;
       });
+      
+      // Dispatch custom event to update cart count in real-time
+      if (typeof window !== 'undefined') {
+        console.log("Dispatching cartUpdated event");
+        window.dispatchEvent(new Event('cartUpdated'));
+      }
     } catch (error) {
       console.error('Error checking stock:', error);
       toast({

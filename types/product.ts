@@ -23,4 +23,6 @@ export type Product = {
   label?: string;
   featured_id?: string;  // ID when product is in featured collection
   hasColorVariants?: boolean; // Flag to indicate if product has color variants
+  details?: string; // Product details from Supabase
+  careInstructions?: string; // Care instructions for the product
 }; 

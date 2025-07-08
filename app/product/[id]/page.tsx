@@ -152,19 +152,40 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
   const handleAddToCart = () => {
     if (quantity > 0 && currentStock > 0) {
       setAddingToCart(true);
+      console.log("Adding to cart:", {
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        image: product.images?.[0] || "/placeholder.svg",
+        quantity: quantity
+      });
       
-      // Simulate API request delay
-      setTimeout(() => {
-        // In a real app, this would add to a cart context/state
-        
-        // Show success toast
+      // Use the cart context to add the product
+      addToCart({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        image: product.images?.[0] || "/placeholder.svg",
+        quantity: quantity // Include the selected quantity
+      }).then(() => {
+        console.log("Successfully added to cart");
         toast({
           title: "Added to cart",
           description: `${quantity} ${quantity === 1 ? 'item' : 'items'} added to your shopping cart.`,
         });
         
+        // Dispatch custom event to update cart count in real-time
+        window.dispatchEvent(new Event('cartUpdated'));
+      }).catch((error) => {
+        console.error('Error adding to cart:', error);
+        toast({
+          title: "Error",
+          description: "Failed to add to cart. Please try again.",
+          variant: "destructive"
+        });
+      }).finally(() => {
         setAddingToCart(false);
-      }, 800);
+      });
     }
   }
   
@@ -430,9 +451,11 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
             <div>
               <h1 className="text-3xl md:text-4xl mb-4 elegant-heading">{product.name}</h1>
               
-              <p className="text-foreground/70 leading-relaxed mb-6">
-                {product.description}
-              </p>
+              <div className="text-foreground/70 leading-relaxed mb-6 space-y-4">
+                {product.description.split(/\n+/).map((paragraph: string, index: number) => (
+                  <p key={index}>{paragraph}</p>
+                ))}
+              </div>
               
               <div className="flex items-baseline gap-3 mb-8">
                 <span className="text-3xl font-medium text-primary">₹{discountedPrice.toLocaleString()}</span>

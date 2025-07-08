@@ -44,7 +44,9 @@ export default function ProductForm({ productId }: ProductFormProps) {
     weight: "",
     images: [],
     hasColorVariants: false,
-    colorVariants: []
+    colorVariants: [],
+    details: "", // Add details field
+    careInstructions: "", // Add care instructions field
   })
   
   // Form state for image uploads
@@ -271,6 +273,30 @@ export default function ProductForm({ productId }: ProductFormProps) {
               onChange={handleChange} 
               rows={5} 
               required 
+            />
+          </div>
+          
+          <div>
+            <Label htmlFor="details">Product Details</Label>
+            <Textarea 
+              id="details" 
+              name="details" 
+              value={product.details || ''} 
+              onChange={handleChange} 
+              rows={8} 
+              placeholder="Enter detailed product information (materials, dimensions, care instructions, etc.)"
+            />
+          </div>
+          
+          <div>
+            <Label htmlFor="careInstructions">Care Instructions</Label>
+            <Textarea 
+              id="careInstructions" 
+              name="careInstructions" 
+              value={product.careInstructions || ''} 
+              onChange={handleChange} 
+              rows={6} 
+              placeholder="Enter care instructions for the product"
             />
           </div>
           
