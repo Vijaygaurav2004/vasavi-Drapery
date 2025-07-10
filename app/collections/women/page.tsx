@@ -34,7 +34,8 @@ import { Badge } from "@/components/ui/badge"
 const categories = [
   { id: "all", name: "All Products" },
   { id: "silk", name: "Silk" },
-  { id: "tissue", name: "Tissue" }
+  { id: "tissue", name: "Tissue" },
+  { id: "fabric", name: "Fabric" }
 ]
 
 // Colors for filtering
@@ -88,7 +89,7 @@ export default function WomensCollectionPage() {
           product.category?.toLowerCase().includes("women") ||
           product.category === "Silk" ||
           product.category === "Tissue" ||
-          product.category === "Fabric"
+          product.category === "Fabrics" // uppercase "Fabrics" for women's collection
         )
         
         setProducts(womensProducts)
@@ -128,9 +129,15 @@ export default function WomensCollectionPage() {
     
     // Apply category filter
     if (selectedCategory !== "all") {
-      result = result.filter(product => 
-        product.category?.toLowerCase() === selectedCategory.toLowerCase()
-      )
+      result = result.filter(product => {
+        const productCategory = product.category || '';
+        // Handle special case for "fabric" category which might be stored as "Fabrics" in the database
+        if (selectedCategory.toLowerCase() === "fabric") {
+          return productCategory.toLowerCase() === "fabric" || 
+                 productCategory.toLowerCase() === "fabrics";
+        }
+        return productCategory.toLowerCase() === selectedCategory.toLowerCase();
+      });
     }
     
     // Apply color filter

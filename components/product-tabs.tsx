@@ -103,31 +103,31 @@ export default function ProductTabs({ product }: ProductTabsProps) {
               ))}
             </div>
           ) : (
-            <div className="bg-primary/5 p-6 rounded-sm border border-primary/10">
-              <h4 className="font-medium mb-4 elegant-heading">Recommended Care</h4>
-              <ul className="space-y-4">
-                <li className="flex items-start gap-3">
-                  <CheckCircle className="w-5 h-5 text-primary/70 mt-0.5 flex-shrink-0" />
+          <div className="bg-primary/5 p-6 rounded-sm border border-primary/10">
+            <h4 className="font-medium mb-4 elegant-heading">Recommended Care</h4>
+            <ul className="space-y-4">
+              <li className="flex items-start gap-3">
+                <CheckCircle className="w-5 h-5 text-primary/70 mt-0.5 flex-shrink-0" />
                   <span className="text-foreground/70">Dry Clean Only – To maintain the shine, texture, and longevity of the silk, we strongly recommend professional dry cleaning.</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle className="w-5 h-5 text-primary/70 mt-0.5 flex-shrink-0" />
+              </li>
+              <li className="flex items-start gap-3">
+                <CheckCircle className="w-5 h-5 text-primary/70 mt-0.5 flex-shrink-0" />
                   <span className="text-foreground/70">Avoid Machine Wash – Do not wash in a washing machine.</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle className="w-5 h-5 text-primary/70 mt-0.5 flex-shrink-0" />
+              </li>
+              <li className="flex items-start gap-3">
+                <CheckCircle className="w-5 h-5 text-primary/70 mt-0.5 flex-shrink-0" />
                   <span className="text-foreground/70">Store with Care – Keep the saree in a muslin cloth to allow the fabric to breathe. Avoid plastic covers.</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle className="w-5 h-5 text-primary/70 mt-0.5 flex-shrink-0" />
+              </li>
+              <li className="flex items-start gap-3">
+                <CheckCircle className="w-5 h-5 text-primary/70 mt-0.5 flex-shrink-0" />
                   <span className="text-foreground/70">Ironing – Use only a low-heat iron or steam press from the reverse side.</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle className="w-5 h-5 text-primary/70 mt-0.5 flex-shrink-0" />
+              </li>
+              <li className="flex items-start gap-3">
+                <CheckCircle className="w-5 h-5 text-primary/70 mt-0.5 flex-shrink-0" />
                   <span className="text-foreground/70">These steps will help preserve the natural beauty and elegance of your pure silk saree for years to come.</span>
-                </li>
-              </ul>
-            </div>
+              </li>
+            </ul>
+          </div>
           )}
         </div>
       </div>

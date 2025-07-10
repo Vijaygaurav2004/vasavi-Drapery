@@ -40,16 +40,16 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   // Load cart from localStorage on mount
   useEffect(() => {
     try {
-      const savedCart = localStorage.getItem('cart');
+    const savedCart = localStorage.getItem('cart');
       console.log("Loading cart from localStorage:", savedCart);
       
-      if (savedCart) {
+    if (savedCart) {
         const parsedCart = JSON.parse(savedCart);
         console.log("Parsed cart:", parsedCart);
         setItems(parsedCart);
       }
-    } catch (e) {
-      console.error('Failed to parse cart from localStorage:', e);
+      } catch (e) {
+        console.error('Failed to parse cart from localStorage:', e);
     }
   }, []);
 

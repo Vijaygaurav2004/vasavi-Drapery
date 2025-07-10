@@ -89,6 +89,54 @@ export async function checkProductStock(id: string) {
   }
 }
 
+// Update product stock after purchase
+export async function updateProductStock(id: string, quantity: number): Promise<void> {
+  try {
+    console.log(`Starting stock update for product ${id} with quantity ${quantity}`);
+    
+    // First get the current stock
+    const { data, error: fetchError } = await supabase
+      .from('products')
+      .select('stock, hasColorVariants, colorVariants')
+      .eq('id', id)
+      .single();
+    
+    if (fetchError) {
+      console.error(`Error fetching product ${id}:`, fetchError);
+      throw fetchError;
+    }
+    
+    if (!data) {
+      console.error(`Product ${id} not found`);
+      throw new Error("Product not found");
+    }
+    
+    console.log(`Current stock for product ${id}: ${data.stock}`);
+    let newStock = Math.max(0, data.stock - quantity);
+    console.log(`Calculated new stock: ${newStock}`);
+    
+    // Update the main product stock
+    const { error: updateError } = await supabase
+      .from('products')
+      .update({ stock: newStock })
+      .eq('id', id);
+    
+    if (updateError) {
+      console.error(`Error updating stock for product ${id}:`, updateError);
+      throw updateError;
+    }
+    
+    // If product has color variants, we need to update the specific variant stock too
+    // This would require knowing which color variant was purchased
+    // For now, we're just updating the main product stock
+    
+    console.log(`Successfully updated stock for product ${id}: ${data.stock} -> ${newStock}`);
+  } catch (error) {
+    console.error(`Error updating stock for product ${id}:`, error);
+    throw error;
+  }
+}
+
 // Add a new product (admin panel)
 export async function addProduct(product: Omit<Product, 'id'>): Promise<Product> {
   try {

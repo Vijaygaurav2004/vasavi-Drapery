@@ -33,6 +33,7 @@ import { Badge } from "@/components/ui/badge"
 const categories = [
   { id: "all", name: "All Products" },
   { id: "dhothi", name: "Dhothi" },
+  { id: "fabric", name: "Fabric" },
 ]
 
 // Colors for filtering
@@ -81,7 +82,8 @@ export default function MensCollectionPage() {
         // Filter men's products
         const mensProducts = allProducts.filter(product => 
           product.category === "Dhothi" ||
-          product.category === "Fabric" ||
+          product.category === "fabric" || // lowercase "fabric" for men's collection
+          product.category === "Fabric" || // uppercase "Fabric" for men's collection
           product.category === "men" ||
           product.category === "Kurta" ||
           product.category === "Accessories" ||
@@ -530,7 +532,7 @@ export default function MensCollectionPage() {
                 <h2 className="text-2xl font-medium mb-2">{quickViewProduct.name}</h2>
                 <div className="text-xl font-medium text-primary mb-4">₹{quickViewProduct.price.toLocaleString()}</div>
                 <div className="text-foreground/70 mb-6 space-y-4">
-                  {quickViewProduct.description.split(/\n+/).map((paragraph: string, index: number) => (
+                  {quickViewProduct.description.split(/\n+/).map((paragraph, index) => (
                     <p key={index}>{paragraph}</p>
                   ))}
                 </div>
