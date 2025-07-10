@@ -91,8 +91,22 @@ export default function CheckoutPage() {
         order_id: data.id,
         handler: async function (response: any) {
           try {
+            // Debug log to check cart items structure
+            console.log("Cart items structure:", items.map(item => ({
+              id: item.id,
+              name: item.name,
+              quantity: item.quantity || 1,
+              quantityType: typeof item.quantity
+            })));
+            
+            // Prepare cart items with proper quantity values
+            const processedCartItems = items.map(item => ({
+              ...item,
+              quantity: Number(item.quantity) || 1 // Ensure quantity is a number
+            }));
+            
             // Log cart items before sending to verification endpoint
-            console.log("Cart items being sent to verification:", JSON.stringify(items, null, 2));
+            console.log("Cart items being sent to verification:", JSON.stringify(processedCartItems, null, 2));
             
             // Verify payment
             const verifyResponse = await fetch("/api/razorpay/verify", {
@@ -104,7 +118,7 @@ export default function CheckoutPage() {
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_signature: response.razorpay_signature,
-                cartItems: items // Send cart items for inventory update
+                cartItems: processedCartItems // Send processed cart items for inventory update
               }),
             });
             

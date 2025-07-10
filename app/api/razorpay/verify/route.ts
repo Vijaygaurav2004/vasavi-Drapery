@@ -40,10 +40,24 @@ export async function POST(request: NextRequest) {
       try {
         console.log(`Processing ${cartItems.length} items for inventory update`);
         
+        // Add detailed logging for each cart item
+        cartItems.forEach(item => {
+          console.log(`Cart item details - ID: ${item.id}, Name: ${item.name}, Quantity: ${item.quantity || 1}, Type: ${typeof item.quantity}`);
+          
+          // Check if quantity is properly formatted
+          if (item.quantity === undefined || item.quantity === null) {
+            console.warn(`Cart item ${item.id} has no quantity defined, defaulting to 1`);
+          } else if (typeof item.quantity !== 'number') {
+            console.warn(`Cart item ${item.id} has non-numeric quantity: ${item.quantity} (${typeof item.quantity}), attempting to convert`);
+          }
+        });
+        
         // Process each cart item to update inventory
         const updatePromises = cartItems.map(item => {
-          console.log(`Updating stock for product ID: ${item.id}, quantity: ${item.quantity}`);
-          return updateProductStock(item.id, item.quantity);
+          // Ensure quantity is a valid number
+          const qty = Number(item.quantity) || 1;
+          console.log(`Updating stock for product ID: ${item.id}, quantity: ${qty} (original: ${item.quantity})`);
+          return updateProductStock(item.id, qty);
         });
         
         // Wait for all inventory updates to complete

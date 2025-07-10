@@ -157,7 +157,8 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
         name: product.name,
         price: product.price,
         image: product.images?.[0] || "/placeholder.svg",
-        quantity: quantity
+        quantity: quantity,
+        quantityType: typeof quantity
       });
       
       // Use the cart context to add the product
@@ -166,9 +167,9 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
         name: product.name,
         price: product.price,
         image: product.images?.[0] || "/placeholder.svg",
-        quantity: quantity // Include the selected quantity
+        quantity: Number(quantity) // Ensure quantity is a number
       }).then(() => {
-        console.log("Successfully added to cart");
+        console.log("Successfully added to cart with quantity:", quantity);
         toast({
           title: "Added to cart",
           description: `${quantity} ${quantity === 1 ? 'item' : 'items'} added to your shopping cart.`,

@@ -20,14 +20,21 @@ export async function getProducts(category?: string): Promise<Product[]> {
     
     // Process each product to parse colorVariants
     const processedData = data.map(product => {
-      if (product.colorVariants && typeof product.colorVariants === 'string') {
+      // Handle lowercase column names from database
+      if (product.colorvariants && typeof product.colorvariants === 'string') {
         try {
-          product.colorVariants = JSON.parse(product.colorVariants);
+          product.colorVariants = JSON.parse(product.colorvariants);
         } catch (e) {
           console.error(`Error parsing colorVariants for product ${product.id}:`, e);
           product.colorVariants = [];
         }
       }
+      
+      // Map hascolorvariants to hasColorVariants for consistency in the app
+      if ('hascolorvariants' in product) {
+        product.hasColorVariants = product.hascolorvariants;
+      }
+      
       return product;
     });
     
@@ -50,15 +57,20 @@ export async function getProduct(id: string): Promise<Product> {
     if (error) throw error;
     if (!data) throw new Error("Product not found");
     
-    // Parse colorVariants from JSON string if they exist
-    if (data.colorVariants && typeof data.colorVariants === 'string') {
+    // Parse colorVariants from JSON string if they exist (handle lowercase column name)
+    if (data.colorvariants && typeof data.colorvariants === 'string') {
       try {
-        data.colorVariants = JSON.parse(data.colorVariants);
+        data.colorVariants = JSON.parse(data.colorvariants);
         console.log("Parsed colorVariants in getProduct function:", data.colorVariants);
       } catch (e) {
         console.error("Error parsing colorVariants in getProduct function:", e);
         data.colorVariants = [];
       }
+    }
+    
+    // Map hascolorvariants to hasColorVariants for consistency in the app
+    if ('hascolorvariants' in data) {
+      data.hasColorVariants = data.hascolorvariants;
     }
     
     return data;
@@ -94,10 +106,14 @@ export async function updateProductStock(id: string, quantity: number): Promise<
   try {
     console.log(`Starting stock update for product ${id} with quantity ${quantity}`);
     
-    // First get the current stock
+    // Ensure quantity is a valid number and greater than 0
+    const qtyToDeduct = Math.max(1, Number(quantity) || 1);
+    console.log(`Quantity to deduct (after validation): ${qtyToDeduct}`);
+    
+    // First get the current stock - only select the stock column to avoid case sensitivity issues
     const { data, error: fetchError } = await supabase
       .from('products')
-      .select('stock, hasColorVariants, colorVariants')
+      .select('stock')
       .eq('id', id)
       .single();
     
@@ -112,23 +128,37 @@ export async function updateProductStock(id: string, quantity: number): Promise<
     }
     
     console.log(`Current stock for product ${id}: ${data.stock}`);
-    let newStock = Math.max(0, data.stock - quantity);
+    
+    // Calculate new stock and ensure it's not negative
+    let newStock = Math.max(0, data.stock - qtyToDeduct);
     console.log(`Calculated new stock: ${newStock}`);
     
     // Update the main product stock
-    const { error: updateError } = await supabase
+    const { data: updateData, error: updateError } = await supabase
       .from('products')
       .update({ stock: newStock })
-      .eq('id', id);
+      .eq('id', id)
+      .select();
     
     if (updateError) {
       console.error(`Error updating stock for product ${id}:`, updateError);
       throw updateError;
     }
     
-    // If product has color variants, we need to update the specific variant stock too
-    // This would require knowing which color variant was purchased
-    // For now, we're just updating the main product stock
+    console.log(`Update response:`, updateData);
+    
+    // Verify the update was successful by fetching the product again
+    const { data: verifyData, error: verifyError } = await supabase
+      .from('products')
+      .select('stock')
+      .eq('id', id)
+      .single();
+      
+    if (verifyError) {
+      console.error(`Error verifying stock update for product ${id}:`, verifyError);
+    } else {
+      console.log(`Verified stock after update for product ${id}: ${verifyData.stock}`);
+    }
     
     console.log(`Successfully updated stock for product ${id}: ${data.stock} -> ${newStock}`);
   } catch (error) {
@@ -149,8 +179,10 @@ export async function addProduct(product: Omit<Product, 'id'>): Promise<Product>
       ...productData,
       // Only add colorVariants if hasColorVariants is true
       ...(product.hasColorVariants && { 
-        colorVariants: JSON.stringify(colorVariants || []) 
-      })
+        colorvariants: JSON.stringify(colorVariants || []) // lowercase column name
+      }),
+      // Use lowercase column name
+      hascolorvariants: product.hasColorVariants
     };
     
     const { data, error } = await supabase
@@ -162,9 +194,9 @@ export async function addProduct(product: Omit<Product, 'id'>): Promise<Product>
     if (error) throw error;
     
     // Parse colorVariants back to object if it exists
-    if (data.colorVariants && typeof data.colorVariants === 'string') {
+    if (data.colorvariants && typeof data.colorvariants === 'string') {
       try {
-        data.colorVariants = JSON.parse(data.colorVariants);
+        data.colorVariants = JSON.parse(data.colorvariants);
       } catch (e) {
         console.error('Error parsing colorVariants:', e);
         data.colorVariants = [];
@@ -243,15 +275,17 @@ export async function updateColorVariant(
 export async function updateProduct(id: string, updates: Partial<Product>): Promise<Product> {
   try {
     // Handle colorVariants separately for update
-    const { colorVariants, ...updateData } = updates;
+    const { colorVariants, hasColorVariants, ...updateData } = updates;
     
     // Create a sanitized update object
     const sanitizedUpdates = {
       ...updateData,
       updated_at: new Date().toISOString(),
+      // Use lowercase column names for database
+      ...(hasColorVariants !== undefined && { hascolorvariants: hasColorVariants }),
       // Only include colorVariants if it exists and product has color variants
       ...(updates.hasColorVariants !== false && colorVariants && { 
-        colorVariants: JSON.stringify(colorVariants) 
+        colorvariants: JSON.stringify(colorVariants) 
       })
     };
     
@@ -265,13 +299,18 @@ export async function updateProduct(id: string, updates: Partial<Product>): Prom
     if (error) throw error;
     
     // Parse colorVariants back to object if it exists
-    if (data.colorVariants && typeof data.colorVariants === 'string') {
+    if (data.colorvariants && typeof data.colorvariants === 'string') {
       try {
-        data.colorVariants = JSON.parse(data.colorVariants);
+        data.colorVariants = JSON.parse(data.colorvariants);
       } catch (e) {
         console.error('Error parsing colorVariants:', e);
         data.colorVariants = [];
       }
+    }
+    
+    // Map hascolorvariants to hasColorVariants for consistency in the app
+    if ('hascolorvariants' in data) {
+      data.hasColorVariants = data.hascolorvariants;
     }
     
     return data;

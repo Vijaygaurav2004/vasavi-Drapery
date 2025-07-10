@@ -63,6 +63,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     // First check if the product is still in stock
     try {
       console.log("Cart context addToCart called with:", product);
+      console.log("Product quantity type:", typeof product.quantity);
+      
       const { inStock, stock } = await checkProductStock(product.id);
       console.log("Stock check result:", { inStock, stock });
       
@@ -76,8 +78,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       }
       
       // Get the quantity to add (default to 1 if not provided)
-      const quantityToAdd = product.quantity || 1;
-      console.log("Quantity to add:", quantityToAdd);
+      const quantityToAdd = Number(product.quantity) || 1;
+      console.log("Quantity to add (after conversion):", quantityToAdd, "Original:", product.quantity);
       
       // Continue with existing add to cart logic...
       setItems(currentItems => {
