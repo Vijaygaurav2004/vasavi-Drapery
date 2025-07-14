@@ -6,9 +6,21 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { amount, orderId, customerInfo } = body;
 
-    // Razorpay API configuration
-    const KEY_ID = process.env.RAZORPAY_KEY_ID || 'rzp_test_lrIpljM6svzCK1';
-    const KEY_SECRET = process.env.RAZORPAY_KEY_SECRET || 'mWRFUf74wBj2iLroh8Pk6nqZ';
+    // Razorpay API configuration - ensure environment variables are set for live mode
+    const KEY_ID = process.env.RAZORPAY_KEY_ID;
+    const KEY_SECRET = process.env.RAZORPAY_KEY_SECRET;
+    
+    if (!KEY_ID || !KEY_SECRET) {
+      console.error('Razorpay API keys not configured');
+      return NextResponse.json({ 
+        error: 'Payment gateway configuration error', 
+        errorCode: 'config_error' 
+      }, { status: 500 });
+    }
+    
+    // Log which mode we're using (test or live) without exposing the full key
+    const isLiveMode = KEY_ID.startsWith('rzp_live_');
+    console.log(`Using Razorpay in ${isLiveMode ? 'LIVE' : 'TEST'} mode`);
     
     // Create order payload for Razorpay
     const payload = {

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { updateProductStock } from '@/lib/supabase/products';
+import { updateOrderPayment } from '@/lib/supabase/orders';
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,7 +16,15 @@ export async function POST(request: NextRequest) {
     console.log('Received payment verification request with cart items:', JSON.stringify(cartItems, null, 2));
     
     // Razorpay API configuration
-    const KEY_SECRET = process.env.RAZORPAY_KEY_SECRET || 'mWRFUf74wBj2iLroh8Pk6nqZ';
+    const KEY_SECRET = process.env.RAZORPAY_KEY_SECRET;
+    
+    if (!KEY_SECRET) {
+      console.error('Razorpay API key secret not configured');
+      return NextResponse.json({ 
+        success: false,
+        message: 'Payment gateway configuration error' 
+      }, { status: 500 });
+    }
     
     // Verify the payment signature
     const generatedSignature = crypto
@@ -27,6 +36,8 @@ export async function POST(request: NextRequest) {
     
     if (!isAuthentic) {
       console.error('Payment signature verification failed');
+      console.error('Generated signature:', generatedSignature);
+      console.error('Received signature:', razorpay_signature);
       return NextResponse.json({ 
         success: false,
         message: 'Payment verification failed' 
@@ -34,6 +45,15 @@ export async function POST(request: NextRequest) {
     }
     
     console.log('Payment signature verified successfully');
+    
+    // Update order status in database
+    try {
+      await updateOrderPayment(razorpay_order_id, razorpay_payment_id, 'paid');
+      console.log('Order payment status updated to paid');
+    } catch (error) {
+      console.error('Error updating order payment status:', error);
+      // Continue processing - we don't want to fail the payment confirmation
+    }
     
     // If payment is authentic, update product inventory
     if (cartItems && Array.isArray(cartItems) && cartItems.length > 0) {
