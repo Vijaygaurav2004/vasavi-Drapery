@@ -41,6 +41,7 @@ export interface UserPurchase {
   razorpay_payment_id?: string;
   purchase_date?: string;
   status?: string;
+  address?: string;
 }
 
 // Create a new order
@@ -156,7 +157,8 @@ export async function createUserPurchasesFromOrder(order: Order): Promise<void> 
       order_id: order.id!,
       razorpay_order_id: order.razorpay_order_id,
       razorpay_payment_id: order.razorpay_payment_id,
-      status: 'completed'
+      status: 'completed',
+      address: order.shipping_address
     }));
     
     const { error } = await supabase

@@ -62,7 +62,8 @@ export default function AdminPurchasesPage() {
       purchase.user_email.toLowerCase().includes(searchTermLower) ||
       purchase.user_name.toLowerCase().includes(searchTermLower) ||
       purchase.product_name.toLowerCase().includes(searchTermLower) ||
-      purchase.razorpay_order_id.toLowerCase().includes(searchTermLower)
+      purchase.razorpay_order_id.toLowerCase().includes(searchTermLower) ||
+      (purchase.address && purchase.address.toLowerCase().includes(searchTermLower))
     );
   });
 
@@ -79,7 +80,8 @@ export default function AdminPurchasesPage() {
       "Total",
       "Order ID",
       "Purchase Date",
-      "Status"
+      "Status",
+      "Address"
     ];
     
     const csvContent = [
@@ -94,7 +96,8 @@ export default function AdminPurchasesPage() {
         purchase.product_price * purchase.quantity,
         purchase.razorpay_order_id,
         purchase.purchase_date ? format(new Date(purchase.purchase_date), "yyyy-MM-dd") : "",
-        purchase.status
+        purchase.status,
+        `"${purchase.address || ''}"`
       ].join(","))
     ].join("\n");
     
@@ -148,7 +151,7 @@ export default function AdminPurchasesPage() {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-foreground/50 h-4 w-4" />
             <Input
-              placeholder="Search by email, name, product, or order ID..."
+              placeholder="Search by email, name, product, address, or order ID..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
@@ -168,12 +171,13 @@ export default function AdminPurchasesPage() {
                 <TableHead>Order ID</TableHead>
                 <TableHead>Date</TableHead>
                 <TableHead>Status</TableHead>
+                <TableHead>Address</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredPurchases.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={8} className="text-center py-8 text-foreground/70">
+                  <TableCell colSpan={9} className="text-center py-8 text-foreground/70">
                     No purchase records found
                   </TableCell>
                 </TableRow>
@@ -220,6 +224,11 @@ export default function AdminPurchasesPage() {
                       <span className="inline-block px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">
                         {purchase.status || "Completed"}
                       </span>
+                    </TableCell>
+                    <TableCell>
+                      <div className="max-w-[200px] truncate text-sm">
+                        {purchase.address || "N/A"}
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))
