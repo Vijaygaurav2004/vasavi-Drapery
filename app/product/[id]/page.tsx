@@ -526,54 +526,6 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
                 </div>
               </div>
               
-              <div className="flex flex-col md:flex-row gap-6 mb-10">
-                <div className="w-full md:w-1/3">
-                  <span className="font-medium mb-3 block text-sm uppercase tracking-wide">Quantity</span>
-                  <div className="flex border border-primary/20 rounded-sm">
-                    <button 
-                      onClick={decreaseQuantity}
-                      className="w-10 h-10 flex items-center justify-center border-r border-primary/20 text-foreground/50 hover:text-foreground transition-colors disabled:opacity-50"
-                      disabled={quantity <= 1}
-                    >
-                      <Minus size={16} />
-                    </button>
-                    <input
-                      type="number"
-                      value={quantity}
-                      onChange={(e) => {
-                        const val = parseInt(e.target.value);
-                        if (!isNaN(val) && val > 0 && val <= currentStock) {
-                          setQuantity(val);
-                        }
-                      }}
-                      className="w-full h-10 text-center bg-transparent border-0 focus:outline-none focus:ring-0"
-                    />
-                    <button 
-                      onClick={increaseQuantity}
-                      className="w-10 h-10 flex items-center justify-center border-l border-primary/20 text-foreground/50 hover:text-foreground transition-colors disabled:opacity-50"
-                      disabled={quantity >= currentStock}
-                    >
-                      <Plus size={16} />
-                    </button>
-                  </div>
-                </div>
-                
-                <div className="w-full md:w-2/3">
-                  <span className="font-medium mb-3 block text-sm uppercase tracking-wide">Availability</span>
-                  {currentStock > 0 ? (
-                    <div className="text-emerald-600 flex items-center gap-2">
-                      <span className="w-2 h-2 bg-emerald-600 rounded-full inline-block"></span>
-                      <span>In Stock</span>
-                    </div>
-                  ) : (
-                    <div className="text-red-600 flex items-center gap-2">
-                      <span className="w-2 h-2 bg-red-600 rounded-full inline-block"></span>
-                      <span>Out of Stock</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-              
               <div className="flex flex-col sm:flex-row gap-4 mb-10">
                 <button
                   onClick={handleAddToCart}
@@ -615,14 +567,6 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
               </div>
               
               <div className="flex flex-col sm:flex-row gap-8 border-t border-primary/10 pt-8">
-                <div className="flex items-start gap-3">
-                  <Truck className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-                  <div>
-                    <span className="font-medium block mb-1">Free Shipping</span>
-                    <span className="text-sm text-foreground/70">For orders over ₹15,000</span>
-                  </div>
-                </div>
-                
                 <div className="flex items-start gap-3">
                   <ShieldCheck className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
                   <div>

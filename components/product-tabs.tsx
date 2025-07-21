@@ -144,10 +144,6 @@ export default function ProductTabs({ product }: ProductTabsProps) {
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
                 <CheckCircle className="w-5 h-5 text-primary/70 mt-0.5 flex-shrink-0" />
-                <span className="text-foreground/70">Free shipping on all orders over ₹15,000 within India.</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 text-primary/70 mt-0.5 flex-shrink-0" />
                 <span className="text-foreground/70">Standard shipping (3-5 business days) is available for ₹250.</span>
               </li>
               <li className="flex items-start gap-3">
