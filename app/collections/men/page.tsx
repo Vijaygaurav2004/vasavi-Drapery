@@ -260,170 +260,110 @@ export default function MensCollectionPage() {
 
   return (
     <>
-      <main className="flex-1 py-12 md:py-20 relative overflow-hidden">
-        <div className="absolute inset-0 silk-pattern opacity-10"></div>
-        <div className="silk-wave absolute inset-0"></div>
-        
-        <div className="container relative z-10">
-          <h1 className="text-4xl md:text-5xl font-bold mb-12 text-center elegant-heading silk-text-gradient">
-            Men's Collection
-          </h1>
-
-          {/* Search Bar */}
-          <div className="relative mb-8">
-            <form onSubmit={(e) => e.preventDefault()} className="relative">
-              <div className="relative flex items-center">
-                <Search className="absolute left-3 text-amber-500 h-5 w-5" />
-                <input
-                  type="text"
-                  placeholder="Search for products..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 pr-10 py-3 w-full rounded-md border border-amber-200/50 focus:border-amber-300 focus:outline-none focus:ring-1 focus:ring-amber-300"
-                />
-                {searchQuery && (
-                  <button 
-                    type="button"
-                    onClick={() => setSearchQuery("")}
-                    className="absolute right-3 text-gray-400 hover:text-gray-600"
-                  >
-                    <X className="h-5 w-5" />
-                  </button>
-                )}
-              </div>
-              <button
-                type="submit"
-                className="absolute right-0 top-0 h-full px-4 flex items-center justify-center bg-amber-100 hover:bg-amber-200 text-amber-900 rounded-r-md transition-colors"
-                onClick={() => {
-                  // This will trigger the search via the useEffect dependency
-                  const currentQuery = searchQuery.trim();
-                  setSearchQuery(currentQuery);
-                }}
-              >
-                SEARCH
-              </button>
-            </form>
+      <main className="flex-1 bg-background">
+        {/* Page Header */}
+        <div className="py-16 bg-gradient-subtle text-center relative overflow-hidden">
+          <div className="absolute inset-0 silk-pattern opacity-40 pointer-events-none" />
+          <div className="container relative z-10">
+            <p className="section-eyebrow mb-3">Refined for Him</p>
+            <h1 className="section-title">Men's Collection</h1>
+            <div className="gold-divider" />
+            <p className="text-sm text-muted-foreground font-light max-w-md mx-auto">
+              Sophisticated dhothis and premium silk fabrics crafted with precision and tradition.
+            </p>
           </div>
+        </div>
 
-          {/* Filter and Sort Bar */}
-          <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
-            {/* Desktop Category Filters */}
-            <div className="hidden md:flex flex-wrap gap-2">
+        <div className="container py-10">
+          {/* Toolbar */}
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-8 pb-5 border-b border-border">
+            <div className="flex flex-wrap gap-2">
               {categories.map((category) => (
                 <button
                   key={category.id}
-                  className={`px-4 py-2 rounded-full text-sm border transition-colors ${
-                    activeCategory === category.id 
-                      ? 'border-primary bg-primary/10 text-primary font-medium' 
-                      : 'border-amber-200/30 hover:border-amber-300/50 hover:bg-amber-50/50'
+                  className={`px-4 py-1.5 text-xs uppercase tracking-widest font-light transition-all duration-200 border ${
+                    activeCategory === category.id
+                      ? 'border-primary bg-primary text-primary-foreground'
+                      : 'border-border text-foreground/60 hover:border-primary/40 hover:text-primary'
                   }`}
+                  style={{ letterSpacing: '0.15em' }}
                   onClick={() => handleCategoryChange(category.id)}
                 >
                   {category.name}
                 </button>
               ))}
             </div>
-            
-            {/* Sort Dropdown */}
-            <div className="flex items-center ml-auto gap-2">
+
+            <div className="flex items-center gap-3 ml-auto">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="gap-2">
-                    <ArrowUpDown size={16} />
-                    <span className="hidden sm:inline">Sort</span>
-                    <span className="hidden sm:inline font-normal opacity-60">
-                      {sortOptions.find(o => o.id === sortOption)?.name}
-                    </span>
+                  <Button variant="outline" size="sm" className="gap-2 text-xs border-border">
+                    <ArrowUpDown size={13} />
+                    <span className="hidden sm:inline">{sortOptions.find(o => o.id === sortOption)?.name}</span>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
+                <DropdownMenuContent align="end" className="text-sm">
                   {sortOptions.map((option) => (
                     <DropdownMenuItem
                       key={option.id}
-                      className={`flex items-center gap-2 ${sortOption === option.id ? 'font-medium bg-amber-50' : ''}`}
+                      className={`cursor-pointer ${sortOption === option.id ? 'text-primary font-medium' : ''}`}
                       onClick={() => setSortOption(option.id)}
                     >
-                      {sortOption === option.id && <CheckIcon size={16} />}
-                      <span className={sortOption === option.id ? 'ml-4' : 'ml-6'}>
-                        {option.name}
-                      </span>
+                      {option.name}
                     </DropdownMenuItem>
                   ))}
                 </DropdownMenuContent>
               </DropdownMenu>
-              
-              {/* Mobile Filter Sheet */}
+
               <Sheet>
                 <SheetTrigger asChild>
-                  <Button variant="outline" className="gap-2 relative">
-                    <Filter size={16} />
-                    <span className="hidden sm:inline">Filters</span>
+                  <Button variant="outline" size="sm" className="gap-2 text-xs border-border relative">
+                    <Filter size={13} />
+                    <span>Filters</span>
                     {activeFilters > 0 && (
-                      <Badge className="absolute -top-2 -right-2 h-5 w-5 p-0 flex items-center justify-center text-[10px]">
+                      <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-primary text-white text-[9px] font-medium rounded-full flex items-center justify-center">
                         {activeFilters}
-                      </Badge>
+                      </span>
                     )}
                   </Button>
                 </SheetTrigger>
                 <SheetContent className="overflow-y-auto">
-                  <SheetHeader>
-                    <SheetTitle>Filter Products</SheetTitle>
-                    <SheetDescription>
-                      Apply filters to find exactly what you're looking for
-                    </SheetDescription>
+                  <SheetHeader className="mb-6">
+                    <SheetTitle className="elegant-heading font-light uppercase tracking-wider">Filter Products</SheetTitle>
+                    <SheetDescription className="text-sm font-light">Refine your selection</SheetDescription>
                   </SheetHeader>
-                  
-                  <div className="py-6 space-y-6">
-                    {/* Price Range */}
+                  <div className="space-y-8">
                     <div>
-                      <h3 className="font-medium mb-3">Price Range</h3>
-                      <div className="px-3">
-                        <Slider
-                          value={priceRange}
-                          min={0}
-                          max={maxPrice}
-                          step={100}
-                          onValueChange={setPriceRange}
-                          className="my-6"
-                        />
-                        <div className="flex justify-between text-sm">
-                          <span>{formatPrice(priceRange[0])}</span>
-                          <span>{formatPrice(priceRange[1])}</span>
-                        </div>
+                      <p className="luxury-label mb-2">Search</p>
+                      <div className="relative">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                        <input type="text" placeholder="Search products..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="luxury-input pl-9" />
                       </div>
                     </div>
-                    
-                    {/* Colors */}
                     <div>
-                      <h3 className="font-medium mb-3">Colors</h3>
-                      <div className="flex flex-wrap gap-2 px-3">
+                      <p className="luxury-label mb-3">Price Range</p>
+                      <Slider value={priceRange} min={0} max={maxPrice} step={100} onValueChange={setPriceRange} className="mb-3" />
+                      <div className="flex justify-between text-xs text-muted-foreground font-light">
+                        <span>{formatPrice(priceRange[0])}</span>
+                        <span>{formatPrice(priceRange[1])}</span>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="luxury-label mb-3">Color</p>
+                      <div className="flex flex-wrap gap-2.5">
                         {colors.map((color) => (
-                          <div
-                            key={color.id}
-                            className={`w-8 h-8 rounded-full cursor-pointer flex items-center justify-center
-                              ${color.id === 'white' ? 'border border-gray-300' : ''}
-                              ${selectedColors.includes(color.id) ? 'ring-2 ring-offset-2 ring-primary' : ''}
-                            `}
-                            style={{ backgroundColor: color.hex }}
-                            onClick={() => toggleColorSelection(color.id)}
-                            title={color.name}
-                          >
-                            {selectedColors.includes(color.id) && (
-                              <CheckIcon size={14} className={`${['white', 'cream', 'beige'].includes(color.id) ? 'text-black' : 'text-white'}`} />
-                            )}
-                          </div>
+                          <button key={color.id} className={`w-8 h-8 rounded-full transition-all ${color.id === 'white' || color.id === 'cream' || color.id === 'beige' ? 'border border-border' : ''}`}
+                            style={{ backgroundColor: color.hex, boxShadow: selectedColors.includes(color.id) ? `0 0 0 2px white, 0 0 0 3.5px hsl(var(--primary))` : 'none' }}
+                            onClick={() => toggleColorSelection(color.id)} title={color.name} />
                         ))}
                       </div>
                     </div>
                   </div>
-                  
-                  <SheetFooter>
-                    <div className="flex gap-2 w-full">
-                      <Button variant="outline" className="flex-1" onClick={resetFilters}>
-                        Reset All
-                      </Button>
+                  <SheetFooter className="mt-8">
+                    <div className="flex gap-3 w-full">
+                      <Button variant="outline" className="flex-1 text-xs tracking-widest uppercase" onClick={resetFilters}>Reset</Button>
                       <SheetClose asChild>
-                        <Button className="flex-1">Apply Filters</Button>
+                        <Button className="flex-1 text-xs tracking-widest uppercase bg-primary hover:bg-primary/90">Apply</Button>
                       </SheetClose>
                     </div>
                   </SheetFooter>
@@ -432,69 +372,46 @@ export default function MensCollectionPage() {
             </div>
           </div>
 
-          {/* Results Summary */}
-          <div className="mb-8 text-sm text-gray-500">
-            Showing {filteredProducts.length} {filteredProducts.length === 1 ? 'product' : 'products'}
-          </div>
+          <p className="text-xs text-muted-foreground font-light mb-7 uppercase tracking-widest" style={{ letterSpacing: '0.15em' }}>
+            {filteredProducts.length} {filteredProducts.length === 1 ? 'product' : 'products'}
+          </p>
 
           {loading ? (
-            <div className="text-center text-muted-foreground py-16">Loading products...</div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+              {[...Array(8)].map((_, i) => <div key={i} className="skeleton aspect-[3/4]" />)}
+            </div>
           ) : filteredProducts.length === 0 ? (
-            <div className="text-center py-16">
-              <h3 className="text-xl font-medium mb-2">No products found</h3>
-              <p className="text-muted-foreground mb-4">
-                We couldn't find any products matching your current filters.
-              </p>
-              <Button onClick={resetFilters}>Clear Filters</Button>
+            <div className="text-center py-24">
+              <h3 className="text-xl elegant-heading font-light mb-3">No products found</h3>
+              <p className="text-muted-foreground text-sm font-light mb-6">Try adjusting your filters.</p>
+              <button onClick={resetFilters} className="luxury-button-sm">Clear Filters</button>
             </div>
           ) : (
-            <div id="products" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mb-20 stagger-animation">
-              {filteredProducts.map((product, index) => (
-                <div 
-                  key={product.id} 
-                  className="product-card luxury-card border border-amber-100/30 decorated-corners overflow-hidden group hover-lift glow-hover"
-                  style={{ animationDelay: `${index * 0.1}s` }}
-                >
-                  <Link href={`/product/${product.id}`} className="block">
-                    <div className="relative aspect-[3/4] overflow-hidden">
-                      <Image
-                        src={product.images?.[0] || "/placeholder.svg"}
-                        alt={product.name}
-                        fill
-                        className="object-cover transition-transform duration-700 group-hover:scale-110"
-                      />
-                      {product.stock <= 0 && (
-                        <div className="absolute top-4 right-4 bg-red-500 px-3 py-1 text-white text-xs uppercase tracking-wider font-medium">
-                          Sold Out
-                        </div>
-                      )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                      <div className="absolute inset-x-0 bottom-0 p-6 translate-y-full group-hover:translate-y-0 transition-transform duration-500">
-                        <button 
-                          className="w-full luxury-button bg-white/20 backdrop-blur-sm border border-white/30 hover:bg-white/30 text-white text-center"
-                          onClick={(e) => openQuickView(e, product)}
-                        >
-                          Quick View
-                        </button>
-                      </div>
-                    </div>
-                  </Link>
-                  <div className="p-6">
-                    <Link href={`/product/${product.id}`}>
-                      <h3 className="text-xl font-medium mb-2 hover:text-amber-800 transition-colors">{product.name}</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 mb-16">
+              {filteredProducts.map((product) => (
+                <div key={product.id} className="product-card group">
+                  <div className="product-card-image-container">
+                    <Link href={`/product/${product.id}`} className="block w-full h-full">
+                      <Image src={product.images?.[0] || "/placeholder.svg"} alt={product.name} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw" className="product-card-image" />
                     </Link>
-                    <p className="text-foreground/70 text-sm mb-4 line-clamp-2">
-                      {product.description.split(/\n+/)[0]}
-                    </p>
-                    <div className="text-lg font-medium mb-6">₹{product.price.toLocaleString()}</div>
-                    <button
-                      onClick={() => handleAddToCart(product)}
-                      className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors disabled:opacity-50"
-                      disabled={addingToCart === product.id || product.stock <= 0}
-                    >
-                      <ShoppingCart size={16} /> 
-                      {addingToCart === product.id ? 'Adding...' : product.stock <= 0 ? 'Out of Stock' : 'Add to Cart'}
-                    </button>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                    {product.stock <= 0 && (
+                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none bg-white/40">
+                        <span className="bg-white/90 px-4 py-1.5 text-xs uppercase tracking-widest text-foreground/60 font-medium" style={{ letterSpacing: '0.18em' }}>Sold Out</span>
+                      </div>
+                    )}
+                    <div className="absolute bottom-0 left-0 right-0 translate-y-full group-hover:translate-y-0 transition-transform duration-500 z-10">
+                      <button onClick={(e) => openQuickView(e, product)} className="w-full py-3 bg-white/92 backdrop-blur-sm text-xs uppercase tracking-widest font-medium hover:bg-primary hover:text-white transition-all duration-300" style={{ letterSpacing: '0.18em' }}>
+                        Quick View
+                      </button>
+                    </div>
+                  </div>
+                  <div className="product-card-content">
+                    <Link href={`/product/${product.id}`}>
+                      <h3 className="product-card-title">{product.name}</h3>
+                    </Link>
+                    <div className="product-card-divider" />
+                    <p className="product-card-price">₹{product.price.toLocaleString()}</p>
                   </div>
                 </div>
               ))}
@@ -503,77 +420,29 @@ export default function MensCollectionPage() {
         </div>
       </main>
 
-      {/* Quick View Modal */}
       {quickViewProduct && (
-        <div 
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-          onClick={handleModalBackdropClick}
-        >
-          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
-            <div className="sticky top-0 flex justify-end p-4 bg-white border-b">
-              <button 
-                onClick={closeQuickView}
-                className="p-2 rounded-full hover:bg-gray-100 transition-colors"
-                aria-label="Close quick view"
-              >
-                <X size={24} />
-              </button>
+        <div className="fixed inset-0 bg-black/65 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={handleModalBackdropClick}>
+          <div className="bg-white max-w-3xl w-full max-h-[88vh] overflow-y-auto shadow-2xl">
+            <div className="sticky top-0 flex items-center justify-between px-6 py-4 bg-white border-b border-border z-10">
+              <p className="text-xs uppercase tracking-widest text-muted-foreground font-light" style={{ letterSpacing: '0.2em' }}>Quick View</p>
+              <button onClick={closeQuickView} className="w-8 h-8 flex items-center justify-center text-foreground/50 hover:text-foreground transition-colors"><X size={18} /></button>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6">
-              <div className="relative aspect-square overflow-hidden rounded-md">
-                <Image
-                  src={quickViewProduct.images && quickViewProduct.images.length > 0 ? quickViewProduct.images[0] : "/placeholder-image.jpg"}
-                  alt={quickViewProduct.name}
-                  fill
-                  className="object-cover"
-                />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
+              <div className="relative aspect-square overflow-hidden">
+                <Image src={quickViewProduct.images?.[0] || "/placeholder-image.jpg"} alt={quickViewProduct.name} fill className="object-cover" />
               </div>
-              <div>
-                <h2 className="text-2xl font-medium mb-2">{quickViewProduct.name}</h2>
-                <div className="text-xl font-medium text-primary mb-4">₹{quickViewProduct.price.toLocaleString()}</div>
-                <div className="text-foreground/70 mb-6 space-y-4">
-                  {quickViewProduct.description.split(/\n+/).map((paragraph, index) => (
-                    <p key={index}>{paragraph}</p>
-                  ))}
-                </div>
-                
-                {quickViewProduct.material && (
-                  <div className="mb-4">
-                    <span className="font-medium">Material:</span> {quickViewProduct.material}
-                  </div>
-                )}
-                
-                {quickViewProduct.color && (
-                  <div className="mb-4">
-                    <span className="font-medium">Color:</span> {quickViewProduct.color}
-                  </div>
-                )}
-                
-                <div className="mb-6">
-                  <span className="font-medium">Availability:</span> {quickViewProduct.stock > 0 ? `In Stock (${quickViewProduct.stock} available)` : 'Out of Stock'}
-                </div>
-                
-                <div className="flex gap-4">
-                  <button
-                    onClick={() => {
-                      handleAddToCart(quickViewProduct);
-                      if (quickViewProduct.stock > 0) {
-                        setTimeout(() => closeQuickView(), 1000);
-                      }
-                    }}
-                    className="flex-1 flex items-center justify-center gap-2 py-3 border border-transparent font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors disabled:opacity-50"
+              <div className="p-7 flex flex-col">
+                <p className="section-eyebrow mb-2">{quickViewProduct.category || 'Men\'s Collection'}</p>
+                <h2 className="text-2xl elegant-heading font-light mb-3">{quickViewProduct.name}</h2>
+                <p className="text-2xl font-light text-primary mb-5">₹{quickViewProduct.price.toLocaleString()}</p>
+                <p className="text-sm text-foreground/65 font-light leading-relaxed mb-6 flex-1">{quickViewProduct.description.split(/\n+/)[0]}</p>
+                <div className="flex gap-3 mt-auto">
+                  <button onClick={() => { handleAddToCart(quickViewProduct); if (quickViewProduct.stock > 0) setTimeout(() => closeQuickView(), 800); }}
                     disabled={addingToCart === quickViewProduct.id || quickViewProduct.stock <= 0}
-                  >
-                    <ShoppingCart size={18} /> 
-                    {addingToCart === quickViewProduct.id ? 'Adding...' : quickViewProduct.stock <= 0 ? 'Out of Stock' : 'Add to Cart'}
+                    className="flex-1 luxury-button flex items-center justify-center gap-2 py-3.5 disabled:opacity-50">
+                    <ShoppingCart size={15} /><span>{quickViewProduct.stock <= 0 ? 'Out of Stock' : 'Add to Cart'}</span>
                   </button>
-                  
-                  <Link
-                    href={`/product/${quickViewProduct.id}`}
-                    className="flex-1 py-3 border border-primary text-primary font-medium rounded-md text-center hover:bg-primary/10 transition-colors"
-                  >
-                    View Details
-                  </Link>
+                  <Link href={`/product/${quickViewProduct.id}`} className="flex-1 secondary-button text-center py-3.5 text-xs">View Details</Link>
                 </div>
               </div>
             </div>

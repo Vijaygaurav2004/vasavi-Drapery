@@ -39,76 +39,93 @@ export default function WishlistPage() {
 
   if (isLoading) {
     return (
-      <div className="container max-w-6xl mx-auto py-16 px-4">
-        <h1 className="text-3xl md:text-4xl font-light mb-10 text-center">Loading...</h1>
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <div className="w-8 h-8 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
       </div>
     )
   }
 
   return (
-    <div className="container max-w-6xl mx-auto py-16 px-4">
-      <h1 className="text-3xl md:text-4xl font-light mb-10 text-center">My Wishlist</h1>
-
-      {items.length === 0 ? (
-        <div className="text-center py-16">
-          <h2 className="text-2xl font-light mb-6">Your wishlist is empty</h2>
-          <p className="text-foreground/70 mb-8">Add items to your wishlist to save them for later.</p>
-          <Link href="/collections/women" className="inline-flex items-center text-primary hover:text-primary/80 transition-colors">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Continue shopping
-          </Link>
+    <main className="flex-1 bg-background">
+      <div className="py-16 bg-gradient-subtle text-center relative overflow-hidden">
+        <div className="absolute inset-0 silk-pattern opacity-40 pointer-events-none" />
+        <div className="container relative z-10">
+          <p className="section-eyebrow mb-3">Saved Items</p>
+          <h1 className="section-title">My Wishlist</h1>
+          <div className="gold-divider" />
         </div>
-      ) : (
-        <>
-          <div className="flex justify-between items-center mb-6">
-            <p className="text-foreground/70">{items.length} item{items.length !== 1 ? 's' : ''}</p>
-            <Button 
-              variant="ghost" 
-              onClick={clearWishlist}
-              className="text-sm"
-            >
-              Clear wishlist
-            </Button>
+      </div>
+
+      <div className="container py-12">
+        {items.length === 0 ? (
+          <div className="text-center py-20">
+            <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6" style={{ background: 'hsl(var(--primary) / 0.08)' }}>
+              <Trash2 size={24} className="text-primary" />
+            </div>
+            <h2 className="text-2xl elegant-heading font-light mb-4">Your wishlist is empty</h2>
+            <p className="text-muted-foreground font-light mb-8 text-sm">
+              Save items you love to revisit them later.
+            </p>
+            <Link href="/collections" className="luxury-button inline-flex items-center gap-2">
+              Browse Collection
+            </Link>
           </div>
+        ) : (
+          <>
+            <div className="flex items-center justify-between mb-8">
+              <p className="text-xs text-muted-foreground uppercase tracking-widest font-light" style={{ letterSpacing: '0.15em' }}>
+                {items.length} {items.length === 1 ? 'item' : 'items'}
+              </p>
+              <button
+                onClick={clearWishlist}
+                className="text-xs text-muted-foreground hover:text-destructive transition-colors uppercase tracking-widest font-light"
+                style={{ letterSpacing: '0.15em' }}
+              >
+                Clear All
+              </button>
+            </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {items.map((item) => (
-              <div key={item.id} className="relative border border-border p-6 group transition-all hover:shadow-md">
-                <div className="absolute top-4 right-4">
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    onClick={() => removeFromWishlist(item.id)}
-                    className="h-8 w-8 rounded-full hover:bg-rose-50 hover:text-rose-500 transition-colors"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-
-                <Link href={`/product/${item.id}`} className="block">
-                  <div className="relative mb-4 aspect-square overflow-hidden">
-                    <Image 
-                      src={item.image || "/placeholder-image.jpg"} 
-                      alt={item.name} 
-                      fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+              {items.map((item) => (
+                <div key={item.id} className="product-card group">
+                  <div className="product-card-image-container">
+                    <Link href={`/product/${item.id}`} className="block w-full h-full">
+                      <Image
+                        src={item.image || "/placeholder-image.jpg"}
+                        alt={item.name}
+                        fill
+                        className="product-card-image"
+                      />
+                    </Link>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                    {/* Remove button */}
+                    <button
+                      onClick={() => removeFromWishlist(item.id)}
+                      className="absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 hover:bg-white shadow-sm flex items-center justify-center transition-all duration-300 hover:text-destructive"
+                      aria-label="Remove from wishlist"
+                    >
+                      <Trash2 size={14} className="text-foreground/60" />
+                    </button>
                   </div>
-                  <h3 className="text-lg font-medium mb-2">{item.name}</h3>
-                  <p className="text-foreground/70 mb-4">₹{item.price.toLocaleString()}</p>
-                </Link>
-
-                <Button 
-                  onClick={() => handleAddToCart(item)} 
-                  className="w-full"
-                >
-                  Add to Cart
-                </Button>
-              </div>
-            ))}
-          </div>
-        </>
-      )}
-    </div>
+                  <div className="product-card-content">
+                    <Link href={`/product/${item.id}`}>
+                      <h3 className="product-card-title">{item.name}</h3>
+                    </Link>
+                    <div className="product-card-divider" />
+                    <p className="product-card-price mb-4">₹{item.price.toLocaleString()}</p>
+                    <button
+                      onClick={() => handleAddToCart(item)}
+                      className="w-full luxury-button-sm py-2.5 flex items-center justify-center gap-1.5"
+                    >
+                      Add to Cart
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+    </main>
   )
 } 

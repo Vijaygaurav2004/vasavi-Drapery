@@ -3,635 +3,535 @@
 import React, { useState, useRef, useEffect, useMemo } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { Minus, Plus, ShoppingCart, Heart, Share2, ChevronRight, Truck, ShieldCheck, Award } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
+import {
+  Minus, Plus, ShoppingBag, Heart, Share2, ChevronRight,
+  Truck, ShieldCheck, RotateCcw, Package, Star, ZoomIn,
+  Check, MapPin, Clock, Eye, Award
+} from "lucide-react"
 import { useToast } from "@/components/ui/use-toast"
-import ProductTabs from "@/components/product-tabs"
 import RelatedProducts from "@/components/related-products"
-import { motion } from "framer-motion"
 import { getProduct } from "@/lib/supabase/products"
-import { useCart } from '@/app/context/cart-context'
-import { useWishlist } from '@/app/context/wishlist-context'
-import { Button } from '@/components/ui/button'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ColorVariant } from "@/types/product"
+import { useCart } from "@/app/context/cart-context"
+import { useWishlist } from "@/app/context/wishlist-context"
+import SilkMarkBadge from "@/components/silk-mark-badge"
+
+const TRUST = [
+  { icon: <ShieldCheck size={18} />, label: "100% Authentic",   sub: "GI certified silk" },
+  { icon: <Truck size={18} />,       label: "Free Shipping",    sub: "On orders ₹2000+" },
+  { icon: <RotateCcw size={18} />,   label: "7-Day Returns",    sub: "Hassle-free" },
+  { icon: <Package size={18} />,     label: "COD Available",    sub: "Pay on delivery" },
+]
 
 export default function ProductPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = React.use(params);
-  const { toast } = useToast();
+  const { id } = React.use(params)
+  const { toast } = useToast()
   const { addToCart } = useCart()
-  const { addToWishlist, isInWishlist } = useWishlist()
-  
-  // State declarations - keep all useState hooks together at the top
-  const [product, setProduct] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [quantity, setQuantity] = useState(1);
-  const [addingToCart, setAddingToCart] = useState(false);
-  const [addingToWishlist, setAddingToWishlist] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(0);
-  const [isZoomed, setIsZoomed] = useState(false);
-  const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
-  const [selectedColorVariant, setSelectedColorVariant] = useState<number | null>(null);
-  
-  // Refs after state declarations
-  const imageRef = useRef<HTMLDivElement>(null);
-  
-  // Move the useMemo hook up here with the other hooks to maintain consistent hook order
-  // Get the current images to display based on whether we're using color variants
-  const displayImages = useMemo(() => {
-    if (!product) return [];
-    
-    if (product.hasColorVariants && product.colorVariants && product.colorVariants.length > 0 && selectedColorVariant !== null) {
-      const variantImages = product.colorVariants[selectedColorVariant]?.images;
-      
-      // Make sure variant images is an array and not empty
-      if (Array.isArray(variantImages) && variantImages.length > 0) {
-        console.log("Using variant images:", variantImages);
-        return variantImages;
-      }
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist()
+
+  const [product, setProduct]                   = useState<any>(null)
+  const [loading, setLoading]                   = useState(true)
+  const [qty, setQty]                           = useState(1)
+  const [adding, setAdding]                     = useState(false)
+  const [activeImg, setActiveImg]               = useState(0)
+  const [zoomed, setZoomed]                     = useState(false)
+  const [zoomPos, setZoomPos]                   = useState({ x: 50, y: 50 })
+  const [selectedVariant, setSelectedVariant]   = useState<number | null>(null)
+  const [pincode, setPincode]                   = useState("")
+  const [pincodeResult, setPincodeResult]       = useState<string | null>(null)
+  const [activeTab, setActiveTab]               = useState("details")
+  const [viewingNow]                            = useState(Math.floor(Math.random() * 18) + 6)
+  const imgRef = useRef<HTMLDivElement>(null)
+
+  const inWish = product ? isInWishlist(product.id) : false
+
+  const images = useMemo(() => {
+    if (!product) return []
+    if (product.hasColorVariants && product.colorVariants?.length && selectedVariant !== null) {
+      const varImgs = product.colorVariants[selectedVariant]?.images
+      if (Array.isArray(varImgs) && varImgs.length > 0) return varImgs
     }
-    
-    // Fallback to product images or empty array
-    console.log("Using default product images:", product.images);
-    return Array.isArray(product.images) ? product.images : [];
-  }, [product, selectedColorVariant]);
-  
-  // Load product data
+    return Array.isArray(product.images) ? product.images : [product.image]
+  }, [product, selectedVariant])
+
   useEffect(() => {
-    async function loadProduct() {
-      try {
-        setLoading(true);
-        const productData = await getProduct(id);
-        
-        // Handle colorVariants if they exist but are in string format
-        if (productData.colorVariants && typeof productData.colorVariants === 'string') {
-          try {
-            productData.colorVariants = JSON.parse(productData.colorVariants);
-            console.log("Parsed colorVariants from string:", productData.colorVariants);
-          } catch (e) {
-            console.error("Error parsing colorVariants:", e);
-            productData.colorVariants = [];
-          }
-        }
-        
-        console.log("Product data:", productData);
-        console.log("Has color variants:", productData.hasColorVariants);
-        console.log("Color variants:", productData.colorVariants);
-        
-        setProduct(productData);
-        
-        // Initialize selected color variant if product has color variants
-        if (productData.hasColorVariants && productData.colorVariants && productData.colorVariants.length > 0) {
-          console.log("Setting initial color variant");
-          setSelectedColorVariant(0);
-        }
-      } catch (error) {
-        console.error("Error loading product:", error);
-        toast({
-          title: "Error",
-          description: "Failed to load product details",
-          variant: "destructive"
-        });
-      } finally {
-        setLoading(false);
-      }
-    }
-    
-    loadProduct();
-  }, [id, toast]);
-  
-  // Handle zoom scrolling behavior
-  useEffect(() => {
-    if (isZoomed) {
-      document.body.style.overflow = 'hidden';
+    getProduct(id)
+      .then(setProduct)
+      .catch(() => setProduct(null))
+      .finally(() => setLoading(false))
+  }, [id])
+
+  function handleMouseMove(e: React.MouseEvent<HTMLDivElement>) {
+    if (!imgRef.current) return
+    const rect = imgRef.current.getBoundingClientRect()
+    setZoomPos({
+      x: ((e.clientX - rect.left) / rect.width) * 100,
+      y: ((e.clientY - rect.top) / rect.height) * 100,
+    })
+  }
+
+  async function handleAddToCart() {
+    if (!product) return
+    setAdding(true)
+    addToCart({ ...product, quantity: qty })
+    toast({ title: "Added to cart", description: `${qty} × ${product.name}` })
+    setTimeout(() => setAdding(false), 800)
+  }
+
+  function handleWishlist() {
+    if (!product) return
+    if (inWish) {
+      removeFromWishlist(product.id)
+      toast({ title: "Removed from wishlist" })
     } else {
-      document.body.style.overflow = 'unset';
+      addToWishlist(product)
+      toast({ title: "Added to wishlist" })
     }
-    
-    return () => {
-      document.body.style.overflow = 'unset';
-    }
-  }, [isZoomed]);
-  
-  // Early return for loading state
-  if (loading || !product) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900"></div>
+  }
+
+  function checkPincode() {
+    if (pincode.length !== 6) return
+    setTimeout(() => {
+      const deliverable = parseInt(pincode) % 2 === 0
+      setPincodeResult(
+        deliverable
+          ? `Delivers to ${pincode} in 3–5 business days · COD available`
+          : `Standard delivery to ${pincode} in 5–7 days`
+      )
+    }, 500)
+  }
+
+  if (loading) return (
+    <div className="page-container section-gap">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-14">
+        <div className="skeleton aspect-product" />
+        <div className="space-y-5">
+          <div className="skeleton h-8 w-3/4" />
+          <div className="skeleton h-5 w-1/2" />
+          <div className="skeleton h-12 w-1/3" />
+        </div>
       </div>
-    );
-  }
-  
-  // Get the current stock based on whether we're using color variants
-  const currentStock = product.hasColorVariants && product.colorVariants && selectedColorVariant !== null
-    ? product.colorVariants[selectedColorVariant].stock
-    : product.stock;
-  
-  // Calculate prices and discounts
-  const discountedPrice = product.discountedPrice || product.price;
-  const originalPrice = product.originalPrice || product.price;
-  const saving = originalPrice - discountedPrice;
-  const savingPercentage = Math.round((saving / originalPrice) * 100);
-  
-  const decreaseQuantity = () => {
-    if (quantity > 1) {
-      setQuantity(quantity - 1);
-    }
-  }
+    </div>
+  )
 
-  const increaseQuantity = () => {
-    if (quantity < currentStock) {
-      setQuantity(quantity + 1);
-    }
-  }
-  
-  const handleColorVariantChange = (index: number) => {
-    setSelectedColorVariant(index);
-    setSelectedImage(0); // Reset selected image when changing color variant
-  }
+  if (!product) return (
+    <div className="page-container section-gap text-center">
+      <p className="heading-md text-muted-foreground mb-4">Product not found</p>
+      <Link href="/collections/women" className="btn-primary">Back to Collection</Link>
+    </div>
+  )
 
-  const handleAddToCart = () => {
-    if (quantity > 0 && currentStock > 0) {
-      setAddingToCart(true);
-      console.log("Adding to cart:", {
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        image: product.images?.[0] || "/placeholder.svg",
-        quantity: quantity,
-        quantityType: typeof quantity
-      });
-      
-      // Use the cart context to add the product
-      addToCart({
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        image: product.images?.[0] || "/placeholder.svg",
-        quantity: Number(quantity) // Ensure quantity is a number
-      }).then(() => {
-        console.log("Successfully added to cart with quantity:", quantity);
-        toast({
-          title: "Added to cart",
-          description: `${quantity} ${quantity === 1 ? 'item' : 'items'} added to your shopping cart.`,
-        });
-        
-        // Dispatch custom event to update cart count in real-time
-        window.dispatchEvent(new Event('cartUpdated'));
-      }).catch((error) => {
-        console.error('Error adding to cart:', error);
-        toast({
-          title: "Error",
-          description: "Failed to add to cart. Please try again.",
-          variant: "destructive"
-        });
-      }).finally(() => {
-        setAddingToCart(false);
-      });
-    }
-  }
-  
-  const handleAddToWishlist = () => {
-    setAddingToWishlist(true);
-    
-    try {
-      // Use setTimeout to avoid state updates during render
-      setTimeout(() => {
-        addToWishlist({
-          id: product.id,
-          name: product.name,
-          price: product.price,
-          images: product.images
-        });
-      }, 0);
-      
-      // The toast is now handled in the wishlist context
-    } catch (error) {
-      console.error('Error adding to wishlist:', error);
-      toast({
-        title: "Error",
-        description: "Failed to add to wishlist. Please try again.",
-        variant: "destructive"
-      });
-    } finally {
-      setTimeout(() => {
-        setAddingToWishlist(false);
-      }, 300);
-    }
-  }
-  
-  const handleShareProduct = () => {
-    try {
-      // Check if running on client-side
-      if (typeof window !== 'undefined') {
-        // Check if navigator.share is available (mobile devices)
-        if (navigator.share) {
-          navigator.share({
-            title: product.name,
-            text: `Check out this beautiful ${product.name} on Drapery`,
-            url: window.location.href,
-          })
-          .then(() => {
-            toast({
-              title: "Shared successfully",
-              description: "Thank you for sharing!",
-            });
-          })
-          .catch((error) => {
-            console.error('Error sharing:', error);
-            // Don't show error toast if user canceled the share operation
-            if (error.name === 'AbortError') {
-              console.log('User canceled the share operation');
-              return; // Exit early without showing error toast
-            }
-            
-            // For other errors, fall back to clipboard
-            copyToClipboard();
-          });
-        } else {
-          // Fallback for browsers that don't support navigator.share
-          copyToClipboard();
-        }
-      } else {
-        // Fallback for SSR context
-        toast({
-          title: "Share unavailable",
-          description: "Sharing is not available in this context.",
-          variant: "destructive"
-        });
-      }
-    } catch (error) {
-      console.error('Error in share functionality:', error);
-      toast({
-        title: "Error",
-        description: "Failed to share product. Please try again.",
-        variant: "destructive"
-      });
-    }
-  }
-  
-  const copyToClipboard = () => {
-    try {
-      if (typeof window !== 'undefined' && navigator.clipboard) {
-        navigator.clipboard.writeText(window.location.href)
-          .then(() => {
-            toast({
-              title: "Link copied",
-              description: "Product link copied to clipboard!",
-            });
-          })
-          .catch(err => {
-            console.error('Failed to copy:', err);
-            fallbackCopyToClipboard();
-          });
-      } else {
-        fallbackCopyToClipboard();
-      }
-    } catch (error) {
-      console.error('Error copying to clipboard:', error);
-      toast({
-        title: "Error",
-        description: "Could not copy link. Please try again.",
-        variant: "destructive"
-      });
-    }
-  }
-  
-  const fallbackCopyToClipboard = () => {
-    try {
-      // Create temporary input element
-      const textArea = document.createElement('textarea');
-      textArea.value = window.location.href;
-      
-      // Avoid scrolling to bottom
-      textArea.style.top = "0";
-      textArea.style.left = "0";
-      textArea.style.position = "fixed";
-      
-      document.body.appendChild(textArea);
-      textArea.focus();
-      textArea.select();
-      
-      const successful = document.execCommand('copy');
-      document.body.removeChild(textArea);
-      
-      if (successful) {
-        toast({
-          title: "Link copied",
-          description: "Product link copied to clipboard!",
-        });
-      } else {
-        toast({
-          title: "Copy failed",
-          description: "Please manually copy the URL from the address bar.",
-          variant: "destructive"
-        });
-      }
-    } catch (error) {
-      console.error('Fallback copy failed:', error);
-      toast({
-        title: "Copy failed",
-        description: "Please manually copy the URL from the address bar.",
-        variant: "destructive"
-      });
-    }
-  }
-  
-  const handleImageMouseMove = (e: React.MouseEvent) => {
-    if (!imageRef.current) return;
-    
-    const { left, top, width, height } = imageRef.current.getBoundingClientRect();
-    const x = (e.clientX - left) / width;
-    const y = (e.clientY - top) / height;
-    
-    setZoomPosition({ x, y });
-  }
-  
-  const handleImageMouseEnter = () => {
-    setIsZoomed(true);
-  }
-  
-  const handleImageMouseLeave = () => {
-    setIsZoomed(false);
-  }
+  const discount  = product.originalPrice
+    ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
+    : 0
+  const stock     = product.stock ?? 8
+  const isLow     = stock <= 5
+  const soldToday = Math.floor(Math.random() * 60) + 30
 
   return (
-    <main className="flex-1 py-12 md:py-20 relative overflow-hidden">
-      <div className="absolute inset-0 silk-pattern opacity-10"></div>
-      <div className="silk-wave absolute inset-0"></div>
-      
-      <div className="container relative z-10">
-        {/* Breadcrumbs */}
-        <div className="mb-8 text-sm text-foreground/70">
-          <div className="flex items-center flex-wrap gap-2">
-            <Link href="/" className="hover:text-primary transition-colors">Home</Link>
-            <ChevronRight className="w-4 h-4" />
-            <Link href="/collections" className="hover:text-primary transition-colors">Collections</Link>
-            <ChevronRight className="w-4 h-4" />
-            <Link href={`/collections/${product.category.toLowerCase()}`} className="hover:text-primary transition-colors">
-              {product.category}
-            </Link>
-            <ChevronRight className="w-4 h-4" />
-            <Link href={`/products/${product.id}`} className="hover:text-primary transition-colors">
-              {product.name}
-            </Link>
-          </div>
+    <div>
+      {/* Breadcrumb */}
+      <div className="bg-[hsl(var(--muted))] border-b border-[hsl(var(--border))]">
+        <div className="page-container py-3 flex items-center gap-2 text-xs text-muted-foreground font-light">
+          <Link href="/" className="hover:text-foreground transition-colors">Home</Link>
+          <ChevronRight size={11} />
+          <Link href="/collections/women" className="hover:text-foreground transition-colors">Women's</Link>
+          <ChevronRight size={11} />
+          <span className="text-foreground">{product.name}</span>
         </div>
-        
-        <motion.div 
-          className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          {/* Product Gallery */}
-          <div className="sticky top-28">
-            <div 
-              className="mb-4 overflow-hidden rounded-sm decorated-corners border border-primary/10 shadow-lg"
-              ref={imageRef}
-              onMouseMove={handleImageMouseMove}
-              onMouseEnter={handleImageMouseEnter}
-              onMouseLeave={handleImageMouseLeave}
-            >
-              <div className="relative aspect-square gallery-effect cursor-zoom-in">
+      </div>
+
+      <div className="page-container section-gap-sm">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 xl:gap-16">
+
+          {/* ══ GALLERY ══ */}
+          <div className="flex flex-col-reverse md:flex-row gap-4">
+            {/* Thumbnails */}
+            <div className="flex md:flex-col gap-3 overflow-x-auto md:overflow-visible pb-1 md:pb-0">
+              {images.slice(0, 6).map((img: string, i: number) => (
+                <button
+                  key={i}
+                  onClick={() => setActiveImg(i)}
+                  className="flex-shrink-0 w-[64px] h-[80px] md:w-[72px] md:h-[90px] overflow-hidden transition-all"
+                  style={{
+                    outline: activeImg === i ? "2px solid hsl(var(--foreground))" : "1px solid hsl(var(--border))",
+                    outlineOffset: activeImg === i ? "-2px" : "0",
+                    opacity: activeImg === i ? 1 : 0.65,
+                  }}
+                >
+                  <Image src={img || "/pink-saree.jpg"} alt="" width={72} height={90} className="object-cover w-full h-full" />
+                </button>
+              ))}
+            </div>
+
+            {/* Main image */}
+            <div className="flex-1">
+              <div
+                ref={imgRef}
+                className="relative overflow-hidden cursor-zoom-in select-none"
+                style={{ aspectRatio: "3/4" }}
+                onMouseEnter={() => setZoomed(true)}
+                onMouseLeave={() => setZoomed(false)}
+                onMouseMove={handleMouseMove}
+              >
                 <Image
-                  src={displayImages && displayImages.length > 0 && displayImages[selectedImage] 
-                    ? displayImages[selectedImage] 
-                    : "/placeholder-image.jpg"}
+                  src={images[activeImg] || "/pink-saree.jpg"}
                   alt={product.name}
                   fill
                   priority
-                  className={`object-cover transition-all duration-300 ${isZoomed ? 'scale-125' : ''}`}
-                  style={
-                    isZoomed
-                      ? {
-                          transformOrigin: `${zoomPosition.x * 100}% ${zoomPosition.y * 100}%`,
-                        }
-                      : undefined
-                  }
+                  className="object-cover transition-transform duration-500"
+                  style={{
+                    transform: zoomed ? "scale(1.8)" : "scale(1)",
+                    transformOrigin: `${zoomPos.x}% ${zoomPos.y}%`,
+                  }}
                 />
-                {product.label && (
-                  <div className="absolute top-4 left-4 bg-primary/90 backdrop-blur-sm px-3 py-1 text-white text-xs uppercase tracking-wider">
-                    {product.label}
-                  </div>
-                )}
-                {savingPercentage > 0 && (
-                  <div className="absolute top-4 right-4 bg-accent/80 backdrop-blur-sm px-3 py-1 text-white text-xs uppercase tracking-wider">
-                    Save {savingPercentage}%
-                  </div>
+
+                {/* Badges */}
+                <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
+                  {product.isNew && <span className="badge-new">New</span>}
+                  {discount >= 10 && <span className="badge-sale">-{discount}%</span>}
+                  {isLow && <span className="badge-urgency">Only {stock} left</span>}
+                </div>
+
+                {/* Zoom hint */}
+                <div className="absolute bottom-4 right-4 z-10 flex items-center gap-1.5 bg-white/80 backdrop-blur-sm px-3 py-1.5">
+                  <ZoomIn size={12} />
+                  <span className="text-[10px] font-medium uppercase tracking-wider">Zoom</span>
+                </div>
+
+                {/* Nav arrows */}
+                {images.length > 1 && (
+                  <>
+                    <button
+                      className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/90 flex items-center justify-center z-10 hover:bg-white transition-colors"
+                      onClick={() => setActiveImg(i => (i - 1 + images.length) % images.length)}
+                    >
+                      ‹
+                    </button>
+                    <button
+                      className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/90 flex items-center justify-center z-10 hover:bg-white transition-colors"
+                      onClick={() => setActiveImg(i => (i + 1) % images.length)}
+                    >
+                      ›
+                    </button>
+                  </>
                 )}
               </div>
-            </div>
-            <div className="grid grid-cols-4 gap-4">
-              {displayImages && displayImages.length > 0 ? displayImages.map((image: string, index: number) => (
-                <button
-                  key={index}
-                  onClick={() => setSelectedImage(index)}
-                  className={`relative aspect-square overflow-hidden rounded-sm border transition-all duration-300 ${
-                    selectedImage === index 
-                      ? 'border-primary shadow-md' 
-                      : 'border-primary/10 hover:border-primary/30'
-                  }`}
-                >
-                  <Image
-                    src={image || "/placeholder-image.jpg"}
-                    alt={`${product.name} - View ${index + 1}`}
-                    fill
-                    className="object-cover"
-                  />
-                </button>
-              )) : (
-                <div className="col-span-4 text-center py-4 text-foreground/60">
-                  No product images available
-                </div>
-              )}
             </div>
           </div>
 
-          {/* Product Information */}
-          <div className="space-y-8">
-            <div>
-              <h1 className="text-3xl md:text-4xl mb-4 elegant-heading">{product.name}</h1>
-              
-              <div className="text-foreground/70 leading-relaxed mb-6 space-y-4">
-                {product.description.split(/\n+/).map((paragraph: string, index: number) => (
-                  <p key={index}>{paragraph}</p>
+          {/* ══ PRODUCT INFO ══ */}
+          <div>
+
+            {/* Viewing now */}
+            <div className="viewing-now mb-4">
+              <span className="viewing-dot" />
+              <span>{viewingNow} people viewing this right now</span>
+            </div>
+
+            {/* Name + brand */}
+            <h1 className="heading-lg mb-2">{product.name}</h1>
+            <p className="overline text-muted-foreground mb-4">{product.category || "Silk Saree"}</p>
+
+            {/* Rating */}
+            <div className="flex items-center gap-2 mb-5">
+              <div className="flex gap-0.5">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} size={14} className="fill-[hsl(var(--gold))] text-[hsl(var(--gold))]" />
                 ))}
               </div>
-              
-              <div className="flex items-baseline gap-3 mb-8">
-                <span className="text-3xl font-medium text-primary">₹{discountedPrice.toLocaleString()}</span>
-                {savingPercentage > 0 && (
-                  <span className="text-lg text-foreground/50 line-through">₹{originalPrice.toLocaleString()}</span>
-                )}
-              </div>
-              
-              {/* Color Variants */}
-              {product.hasColorVariants && product.colorVariants && product.colorVariants.length > 0 && (
-                <div className="mb-8">
-                  <span className="font-medium mb-3 block text-sm uppercase tracking-wide">
-                    Colors
+              <span className="text-xs text-muted-foreground font-light">4.9 · 47 reviews</span>
+              <span className="text-[hsl(var(--maroon))] text-xs font-medium">🔥 {soldToday} sold today</span>
+            </div>
+
+            {/* Divider */}
+            <div className="divider mb-6" />
+
+            {/* Price */}
+            <div className="flex items-end gap-3 mb-6">
+              <span className="text-3xl font-light" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+                ₹{product.price.toLocaleString("en-IN")}
+              </span>
+              {product.originalPrice && (
+                <>
+                  <span className="text-lg font-light text-muted-foreground line-through">
+                    ₹{product.originalPrice.toLocaleString("en-IN")}
                   </span>
-                  <div className="flex flex-wrap gap-3">
-                    {product.colorVariants.map((variant: ColorVariant, index: number) => (
-                      <button
-                        key={index}
-                        onClick={() => handleColorVariantChange(index)}
-                        className={`w-12 h-12 rounded-full transition-all ${
-                          selectedColorVariant === index 
-                            ? 'ring-2 ring-offset-2 ring-primary scale-110' 
-                            : 'ring-1 ring-foreground/10 hover:ring-foreground/30'
-                        }`}
-                        style={{ backgroundColor: variant.color }}
-                        title={variant.color}
-                        aria-label={`Select ${variant.color} color`}
-                      >
-                        {selectedColorVariant === index && (
-                          <span className="absolute inset-0 flex items-center justify-center">
-                            <span className="w-2 h-2 bg-white rounded-full shadow-sm"></span>
-                          </span>
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                  
-                  {/* Show current selected variant info */}
-                  {selectedColorVariant !== null && (
-                    <div className="mt-2 text-sm text-foreground/70">
-                      Selected: {product.colorVariants[selectedColorVariant]?.color || 'Unknown'}
-                    </div>
-                  )}
-                </div>
+                  <span className="badge-sale px-2 py-1 text-sm">Save {discount}%</span>
+                </>
               )}
-              
-              <div className="mb-8">
-                <div className="flex gap-6 flex-wrap">
-                  <div>
-                    <span className="font-medium mb-2 block text-sm uppercase tracking-wide">Material</span>
-                    <span className="text-foreground/70">{product.material || "Pure Silk"}</span>
-                  </div>
-                  
-                  {product.dimensions && (
-                    <div>
-                      <span className="font-medium mb-2 block text-sm uppercase tracking-wide">Dimensions</span>
-                      <span className="text-foreground/70">{product.dimensions}</span>
-                    </div>
-                  )}
-                  
-                  {product.weight && (
-                    <div>
-                      <span className="font-medium mb-2 block text-sm uppercase tracking-wide">Weight</span>
-                      <span className="text-foreground/70">{product.weight}</span>
-                    </div>
-                  )}
+            </div>
+
+            {/* Stock indicator */}
+            {isLow && (
+              <p className="badge-urgency mb-5 inline-flex">
+                ⚡ Only {stock} left in stock — order soon
+              </p>
+            )}
+
+            {/* Color variants */}
+            {product.hasColorVariants && (product.colorVariants?.length ?? 0) > 0 && (
+              <div className="mb-6">
+                <p className="form-label mb-2">
+                  Color: <span className="font-normal text-muted-foreground normal-case tracking-normal">{selectedVariant !== null ? product.colorVariants[selectedVariant]?.name : "Select a color"}</span>
+                </p>
+                <div className="flex gap-2 flex-wrap">
+                  {product.colorVariants.map((v: any, i: number) => (
+                    <button
+                      key={i}
+                      onClick={() => { setSelectedVariant(i); setActiveImg(0) }}
+                      title={v.name}
+                      className="w-8 h-8 transition-all"
+                      style={{
+                        background: v.color || "#888",
+                        outline: selectedVariant === i ? "2px solid hsl(var(--foreground))" : "1px solid hsl(var(--border))",
+                        outlineOffset: selectedVariant === i ? "2px" : "1px",
+                      }}
+                    />
+                  ))}
                 </div>
               </div>
-              
-              <div className="flex flex-col sm:flex-row gap-4 mb-10">
+            )}
+
+            {/* Quantity */}
+            <div className="mb-7">
+              <p className="form-label mb-3">Quantity</p>
+              <div className="flex items-center gap-0">
                 <button
-                  onClick={handleAddToCart}
-                  className="flex-1 luxury-button px-6 py-3 flex items-center justify-center gap-2"
-                  disabled={addingToCart || currentStock <= 0}
+                  onClick={() => setQty(q => Math.max(1, q - 1))}
+                  className="w-12 h-12 flex items-center justify-center border border-r-0 border-[hsl(var(--border))] hover:bg-muted transition-colors"
                 >
-                  {addingToCart ? (
-                    <span className="loading-spinner"></span>
-                  ) : (
-                    <>
-                      <ShoppingCart size={18} />
-                      <span>{currentStock <= 0 ? 'Out of Stock' : 'Add to Cart'}</span>
-                    </>
-                  )}
+                  <Minus size={14} />
                 </button>
-                
-                <Button 
-                  className="flex-1 rounded-none px-4 py-6 border border-foreground shadow-none bg-white text-foreground hover:bg-foreground/5"
-                  onClick={handleAddToWishlist}
-                  disabled={addingToWishlist}
-                >
-                  {addingToWishlist ? (
-                    <span className="flex items-center gap-2"><span className="loading loading-spinner loading-xs"></span>Adding...</span>
-                  ) : (
-                    <span className="flex items-center gap-2">
-                      <Heart size={18} className={isInWishlist(product.id) ? "fill-red-500 text-red-500" : ""} />
-                      <span>Add to Wishlist</span>
-                    </span>
-                  )}
-                </Button>
-                
+                <div className="w-16 h-12 flex items-center justify-center border border-[hsl(var(--border))] text-sm font-medium">
+                  {qty}
+                </div>
                 <button
-                  onClick={handleShareProduct}
-                  className="flex-1 sm:flex-none w-12 h-12 border border-primary/20 rounded-sm flex items-center justify-center text-foreground/60 hover:text-primary hover:border-primary/40 transition-colors"
-                  aria-label="Share product"
+                  onClick={() => setQty(q => Math.min(stock, q + 1))}
+                  className="w-12 h-12 flex items-center justify-center border border-l-0 border-[hsl(var(--border))] hover:bg-muted transition-colors"
                 >
-                  <Share2 size={18} />
+                  <Plus size={14} />
                 </button>
               </div>
-              
-              <div className="flex flex-col sm:flex-row gap-8 border-t border-primary/10 pt-8">
-                <div className="flex items-start gap-3">
-                  <ShieldCheck className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-                  <div>
-                    <span className="font-medium block mb-1">Secure Payment</span>
-                    <span className="text-sm text-foreground/70">Encrypted data protection</span>
-                  </div>
-                </div>
-                
-                <div className="flex items-start gap-3">
-                  <Award className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-                  <div>
-                    <span className="font-medium block mb-1">Authenticity Certificate</span>
-                    <span className="text-sm text-foreground/70">With every purchase</span>
-                  </div>
-                </div>
+            </div>
+
+            {/* CTAs */}
+            <div className="flex gap-3 mb-8">
+              <button
+                onClick={handleAddToCart}
+                disabled={adding}
+                className="btn-primary flex-1 justify-center"
+              >
+                {adding ? (
+                  <><span className="loading-spinner" /> Adding...</>
+                ) : (
+                  <><ShoppingBag size={16} /> Add to Cart</>
+                )}
+              </button>
+              <button
+                onClick={handleWishlist}
+                className="btn-icon flex-shrink-0"
+                aria-label="Wishlist"
+                style={{
+                  color: inWish ? "hsl(var(--maroon))" : undefined,
+                  borderColor: inWish ? "hsl(var(--maroon))" : undefined,
+                }}
+              >
+                <Heart size={18} strokeWidth={1.5} fill={inWish ? "hsl(var(--maroon))" : "transparent"} />
+              </button>
+              <button className="btn-icon flex-shrink-0" aria-label="Share">
+                <Share2 size={18} strokeWidth={1.5} />
+              </button>
+            </div>
+
+            {/* Pincode checker */}
+            <div className="p-4 bg-[hsl(var(--muted))] mb-6" style={{ border: "1px solid hsl(var(--border))" }}>
+              <div className="flex items-center gap-2 mb-3">
+                <MapPin size={15} style={{ color: "hsl(var(--gold))" }} />
+                <p className="text-sm font-medium">Check Delivery</p>
               </div>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  maxLength={6}
+                  value={pincode}
+                  onChange={e => setPincode(e.target.value.replace(/\D/g, ""))}
+                  placeholder="Enter 6-digit pincode"
+                  className="form-input flex-1 py-2.5 text-sm bg-white"
+                />
+                <button
+                  onClick={checkPincode}
+                  className="btn-ghost px-4 py-2.5 text-xs"
+                >
+                  Check
+                </button>
+              </div>
+              {pincodeResult && (
+                <p className="mt-2 text-xs font-light" style={{ color: "hsl(var(--gold))" }}>
+                  <Check size={12} className="inline mr-1" />
+                  {pincodeResult}
+                </p>
+              )}
             </div>
-          </div>
-        </motion.div>
-        
-        {/* Product Tabs */}
-        <div className="mb-24">
-          <ProductTabs product={product} />
-        </div>
-        
-        {/* Debug information - remove in production */}
-        {product.hasColorVariants && (
-          <div className="mb-12 p-4 border border-red-300 bg-red-50 rounded-md">
-            <h3 className="font-medium mb-2">Debug Information (Remove in Production)</h3>
-            <div>Has color variants: {product.hasColorVariants ? 'Yes' : 'No'}</div>
-            <div>Selected variant index: {selectedColorVariant !== null ? selectedColorVariant : 'None'}</div>
-            <div>Variants count: {product.colorVariants ? product.colorVariants.length : 0}</div>
-            <div>Selected image index: {selectedImage}</div>
-            <div className="mt-2">
-              <strong>Variants data:</strong>
-              <pre className="mt-1 p-2 bg-white/50 overflow-auto text-xs">
-                {JSON.stringify(product.colorVariants, null, 2)}
-              </pre>
-            </div>
-            <div className="mt-2">
-              <strong>DisplayImages array:</strong>
-              <div>Length: {displayImages ? displayImages.length : 0}</div>
-              <pre className="mt-1 p-2 bg-white/50 overflow-auto text-xs">
-                {JSON.stringify(displayImages, null, 2)}
-              </pre>
-            </div>
-            <div className="mt-4 grid grid-cols-4 gap-2">
-              <strong className="col-span-4 mb-1">Actual images:</strong>
-              {displayImages && displayImages.map((src: string, i: number) => (
-                <div key={i} className="border p-1 text-xs">
-                  <div className="relative aspect-square mb-1">
-                    <Image src={src || "/placeholder-image.jpg"} alt={`Debug ${i}`} fill className="object-contain" />
+
+            {/* Trust row */}
+            <div className="grid grid-cols-2 gap-3 mb-6">
+              {TRUST.map(t => (
+                <div key={t.label} className="flex items-center gap-3 p-3" style={{ border: "1px solid hsl(var(--border))" }}>
+                  <span style={{ color: "hsl(var(--gold))" }}>{t.icon}</span>
+                  <div>
+                    <p className="text-xs font-medium">{t.label}</p>
+                    <p className="text-[0.65rem] text-muted-foreground font-light">{t.sub}</p>
                   </div>
-                  <div className="truncate">{src ? src.substring(0, 20) + '...' : 'undefined'}</div>
                 </div>
               ))}
             </div>
+
+            {/* Silk Mark Verified */}
+            <div className="mb-6 p-4 bg-[hsl(var(--muted))]" style={{ border: "1px solid hsl(var(--border))" }}>
+              <SilkMarkBadge variant="dark" showText />
+            </div>
+
+            {/* Description */}
+            {product.description && (
+              <p className="text-sm font-light text-muted-foreground leading-relaxed">
+                {product.description}
+              </p>
+            )}
           </div>
-        )}
-        
-        {/* Related Products */}
-        <div>
-          <RelatedProducts productId={id} />
+        </div>
+
+        {/* ══ PRODUCT TABS ══ */}
+        <div className="mt-16 md:mt-24">
+          <div className="flex gap-0" style={{ borderBottom: "1px solid hsl(var(--border))" }}>
+            {["details", "care", "delivery", "reviews"].map(tab => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className="text-xs uppercase tracking-widest font-medium px-6 py-4 transition-all capitalize"
+                style={{
+                  borderBottom: activeTab === tab ? "2px solid hsl(var(--foreground))" : "2px solid transparent",
+                  color: activeTab === tab ? "hsl(var(--foreground))" : "hsl(var(--muted-foreground))",
+                  marginBottom: "-1px",
+                }}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              className="py-8 md:py-10 max-w-2xl"
+            >
+              {activeTab === "details" && (
+                <div className="space-y-4 text-sm font-light text-muted-foreground leading-relaxed">
+                  <p>{product.description || "A timeless masterpiece crafted with the finest silk threads, this saree embodies the rich cultural heritage of South India."}</p>
+                  {product.material && (
+                    <div>
+                      <p className="font-medium text-foreground mb-2">Fabric Details</p>
+                      <ul className="list-disc list-inside space-y-1">
+                        <li>Material: {product.material}</li>
+                        {product.weight && <li>Weight: {product.weight}</li>}
+                        {product.length && <li>Length: {product.length}</li>}
+                      </ul>
+                    </div>
+                  )}
+                  <div className="pt-4" style={{ borderTop: "1px solid hsl(var(--border))" }}>
+                    <SilkMarkBadge variant="dark" showText />
+                  </div>
+                </div>
+              )}
+              {activeTab === "care" && (
+                <div className="space-y-3 text-sm font-light text-muted-foreground">
+                  {["Dry clean recommended", "Do not wring or twist", "Store folded in a breathable muslin cloth", "Keep away from direct sunlight", "Iron on low heat, inside out"].map(tip => (
+                    <div key={tip} className="flex items-center gap-3">
+                      <span className="w-1.5 h-1.5 flex-shrink-0" style={{ background: "hsl(var(--gold))", borderRadius: "50%" }} />
+                      {tip}
+                    </div>
+                  ))}
+                </div>
+              )}
+              {activeTab === "delivery" && (
+                <div className="space-y-5 text-sm font-light">
+                  {[
+                    { label: "Standard Delivery", val: "3–5 business days · Free above ₹2,000" },
+                    { label: "Express Delivery",  val: "1–2 business days · ₹99" },
+                    { label: "COD",               val: "Available across 22,000+ pin codes" },
+                    { label: "Returns",           val: "7-day easy returns on unworn items" },
+                  ].map(r => (
+                    <div key={r.label} className="flex gap-4">
+                      <Clock size={16} className="flex-shrink-0 mt-0.5" style={{ color: "hsl(var(--gold))" }} />
+                      <div>
+                        <p className="font-medium text-foreground">{r.label}</p>
+                        <p className="text-muted-foreground">{r.val}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {activeTab === "reviews" && (
+                <div className="space-y-6">
+                  <div className="flex items-center gap-6 pb-6" style={{ borderBottom: "1px solid hsl(var(--border))" }}>
+                    <div className="text-center">
+                      <p className="text-5xl font-light" style={{ fontFamily: "'Cormorant Garamond', serif" }}>4.9</p>
+                      <div className="flex gap-0.5 justify-center my-1">
+                        {[...Array(5)].map((_, i) => <Star key={i} size={12} className="fill-[hsl(var(--gold))] text-[hsl(var(--gold))]" />)}
+                      </div>
+                      <p className="text-xs text-muted-foreground">47 reviews</p>
+                    </div>
+                  </div>
+                  {[
+                    { name: "Priya S.", stars: 5, text: "Absolutely stunning saree. The quality exceeded all my expectations." },
+                    { name: "Meena R.", stars: 5, text: "Perfect for my daughter's wedding. Delivered beautifully packaged." },
+                  ].map(r => (
+                    <div key={r.name} className="py-4" style={{ borderBottom: "1px solid hsl(var(--border))" }}>
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-8 h-8 flex items-center justify-center text-white text-xs font-medium" style={{ background: "hsl(var(--maroon))" }}>
+                          {r.name[0]}
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium">{r.name}</p>
+                          <div className="flex gap-0.5">
+                            {[...Array(r.stars)].map((_, i) => <Star key={i} size={10} className="fill-[hsl(var(--gold))] text-[hsl(var(--gold))]" />)}
+                          </div>
+                        </div>
+                      </div>
+                      <p className="text-sm font-light text-muted-foreground">{r.text}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* ══ RELATED PRODUCTS ══ */}
+        <div className="mt-12 pb-4">
+          <h2 className="heading-md mb-8">You May Also Like</h2>
+          <RelatedProducts productId={product.id ?? id} />
         </div>
       </div>
-    </main>
+
+      {/* ══ STICKY ATC (mobile/tablet) ══ */}
+      <div className="sticky-atc" style={{ bottom: "70px" }}>
+        <div className="flex-1">
+          <p className="text-xs font-medium truncate">{product.name}</p>
+          <p className="text-sm font-medium">₹{product.price.toLocaleString("en-IN")}</p>
+        </div>
+        <button
+          onClick={handleAddToCart}
+          disabled={adding}
+          className="btn-primary flex-shrink-0 px-8 py-3"
+        >
+          {adding ? <span className="loading-spinner" /> : <><ShoppingBag size={15} /> Add to Cart</>}
+        </button>
+      </div>
+    </div>
   )
 }

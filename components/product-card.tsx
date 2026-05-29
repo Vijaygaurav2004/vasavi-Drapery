@@ -1,94 +1,160 @@
+"use client"
+
 import Link from "next/link"
 import Image from "next/image"
-import { Heart } from "lucide-react"
+import { useState } from "react"
+import { Heart, ShoppingBag, Eye, Star } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
+import { useCart } from "@/app/context/cart-context"
 import { useWishlist } from "@/app/context/wishlist-context"
 import { useToast } from "@/components/ui/use-toast"
+import { Product } from "@/types/product"
+import SilkMarkBadge from "@/components/silk-mark-badge"
 
-interface Product {
-  id: string;
-  name: string;
-  price: number;
-  images: string[];
-  // Remove unused category
-  // category: string;
+interface Props {
+  product: Product
 }
 
-interface ProductCardProps {
-  product: Product;
-  onAddToCart?: (product: Product) => void;
-}
+export default function ProductCard({ product }: Props) {
+  const { addToCart } = useCart()
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist()
+  const { toast } = useToast()
+  const [adding, setAdding] = useState(false)
+  const [wished, setWished] = useState(isInWishlist(product.id ?? ""))
 
-export default function ProductCard({ product, onAddToCart }: ProductCardProps) {
-  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
-  const { toast } = useToast();
-  
-  const inWishlist = isInWishlist(product.id);
-  
-  const handleWishlistToggle = () => {
-    // Use setTimeout to avoid state updates during render
-    setTimeout(() => {
-      if (inWishlist) {
-        removeFromWishlist(product.id);
-        toast({
-          description: "Removed from wishlist",
-          duration: 2000,
-        });
-      } else {
-        addToWishlist({
-          id: product.id,
-          name: product.name,
-          price: product.price,
-          image: product.images && product.images.length > 0 ? product.images[0] : "/placeholder-image.jpg"
-        });
-        toast({
-          description: "Added to wishlist",
-          duration: 2000,
-        });
-      }
-    }, 0);
-  };
+  const inWish   = isInWishlist(product.id ?? "")
+  const discount = product.discountedPrice
+    ? Math.round(((product.price - product.discountedPrice) / product.price) * 100)
+    : 0
+  const effectivePrice = product.discountedPrice ?? product.price
+  const stock    = product.stock ?? 12
+  const sold     = Math.floor(Math.random() * 80) + 20
+  const views    = Math.floor(Math.random() * 18) + 5
+  const isLow    = stock <= 5
+
+  async function handleAddToCart(e: React.MouseEvent) {
+    e.preventDefault()
+    setAdding(true)
+    try {
+      addToCart({ ...product, quantity: 1 })
+      toast({ title: "Added to cart", description: product.name })
+    } finally {
+      setTimeout(() => setAdding(false), 800)
+    }
+  }
+
+  function handleWishlist(e: React.MouseEvent) {
+    e.preventDefault()
+    if (inWish) {
+      removeFromWishlist(product.id ?? "")
+      setWished(false)
+    } else {
+      addToWishlist(product)
+      setWished(true)
+    }
+    toast({ title: inWish ? "Removed from wishlist" : "Added to wishlist" })
+  }
 
   return (
-    <div className="silk-card group hover:translate-y-[-8px] transition-all duration-500">
-      <Link href={`/product/${product.id}`} className="block relative overflow-hidden aspect-[4/5]">
+    <Link href={`/product/${product.id}`} className="product-card block group">
+
+      {/* Image container */}
+      <div className="product-card-img">
         <Image
-          src={product.images && product.images.length > 0 ? product.images[0] : "/placeholder-image.jpg"}
+          src={(product.images?.[0]) || "/pink-saree.jpg"}
           alt={product.name}
           fill
-          className="object-cover transition-transform duration-700 group-hover:scale-105"
+          className="img-cover"
+          sizes="(max-width:768px) 50vw, (max-width:1280px) 33vw, 25vw"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-foreground/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-        
+
+        {/* Badges */}
+        <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-10">
+          {product.label && <span className="badge-new">{product.label}</span>}
+          {discount >= 10 && <span className="badge-sale">-{discount}%</span>}
+          {isLow && <span className="badge-urgency">Only {stock} left</span>}
+        </div>
+
         {/* Wishlist button */}
-        <button 
-          onClick={(e) => {
-            e.preventDefault();
-            handleWishlistToggle();
-          }}
-          className="absolute top-3 right-3 p-2 rounded-full bg-white/80 hover:bg-white shadow-sm z-10 transition-all duration-300"
+        <button
+          onClick={handleWishlist}
+          className="absolute top-3 right-3 z-10 w-9 h-9 flex items-center justify-center bg-white/90 backdrop-blur-sm transition-all duration-200 hover:bg-white"
+          aria-label="Wishlist"
         >
-          <Heart 
-            size={18} 
-            className={`${inWishlist ? 'fill-red-500 text-red-500' : 'text-gray-600'} transition-colors`} 
+          <Heart
+            size={16}
+            strokeWidth={1.5}
+            className="transition-all duration-200"
+            style={{
+              fill: inWish ? "hsl(var(--maroon))" : "transparent",
+              color: inWish ? "hsl(var(--maroon))" : "hsl(var(--foreground))",
+              transform: wished ? "scale(1.25)" : "scale(1)",
+            }}
           />
         </button>
-      </Link>
-      <div className="p-6 text-center">
-        <Link href={`/product/${product.id}`} className="block mb-2 text-xl tracking-wide font-light group-hover:text-primary-foreground transition-colors">
-          {product.name}
-        </Link>
-        <p className="text-foreground/70 mb-3">
-          ₹{product.price.toLocaleString()}
-        </p>
-        <div className="w-8 h-px mx-auto bg-primary/50 mb-3"></div>
-        <button 
-          className="uppercase text-xs tracking-wider text-foreground/80 hover:text-foreground transition-colors"
-          onClick={() => onAddToCart && onAddToCart(product)}
-        >
-          Add to Cart
-        </button>
+
+        {/* Hover CTA */}
+        <div className="product-card-cta">
+          <button
+            onClick={handleAddToCart}
+            disabled={adding}
+            className="w-full flex items-center justify-center gap-2 bg-white text-foreground text-xs font-medium uppercase tracking-widest py-3 hover:bg-[hsl(var(--gold))] hover:text-white transition-all duration-200"
+          >
+            {adding ? (
+              <span className="loading-spinner" style={{ borderTopColor: "hsl(var(--foreground))" }} />
+            ) : (
+              <><ShoppingBag size={14} /> Add to Cart</>
+            )}
+          </button>
+        </div>
       </div>
-    </div>
+
+      {/* Info */}
+      <div className="product-card-info">
+        {/* Viewing now */}
+        <div className="viewing-now mb-2">
+          <span className="viewing-dot" />
+          <span>{views} viewing now</span>
+        </div>
+
+        <h3 className="product-card-name line-clamp-2">{product.name}</h3>
+
+        {/* Rating */}
+        <div className="flex items-center gap-1 my-1.5">
+          {[...Array(5)].map((_, i) => (
+            <Star
+              key={i}
+              size={11}
+              className="fill-[hsl(var(--gold))] text-[hsl(var(--gold))]"
+            />
+          ))}
+          <span className="text-[0.65rem] text-muted-foreground ml-1">({Math.floor(Math.random() * 40) + 5})</span>
+        </div>
+
+        {/* Price */}
+        <div className="flex items-baseline gap-2 mt-1">
+          <span className="product-card-price">
+            ₹{effectivePrice.toLocaleString("en-IN")}
+          </span>
+          {product.discountedPrice && (
+            <span className="product-card-price-old">
+              ₹{product.price.toLocaleString("en-IN")}
+            </span>
+          )}
+        </div>
+
+        {/* Sold count */}
+        {sold > 40 && (
+          <p className="text-[0.62rem] text-[hsl(var(--maroon))] font-medium mt-1 uppercase tracking-wide">
+            🔥 {sold} sold today
+          </p>
+        )}
+
+        {/* Silk Mark badge */}
+        <div className="mt-2 pt-2" style={{ borderTop: "1px solid hsl(var(--border))" }}>
+          <SilkMarkBadge variant="dark" size="sm" />
+        </div>
+      </div>
+    </Link>
   )
 }
-

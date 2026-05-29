@@ -1,154 +1,126 @@
 "use client"
 
 import Link from "next/link"
-import { useState, useEffect, useRef } from "react"
-import { Menu, X, ChevronDown, ChevronRight } from "lucide-react"
+import { useState, useEffect } from "react"
+import { Menu, X, ChevronDown } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 
-type SubMenu = {
-  label: string;
-  items: { label: string; href: string }[];
-}
-
-type MenuItem = {
-  label: string;
-  href: string;
-  submenu?: SubMenu;
-}
-
-// Define menu structure
-const menuItems: MenuItem[] = [
-  { label: "HOME", href: "/" },
-  { 
-    label: "COLLECTIONS", 
+const navItems = [
+  { label: "Home",        href: "/" },
+  {
+    label: "Collections",
     href: "/collections",
-    submenu: {
-      label: "Collections",
-      items: [
-        { label: "Women's Collection", href: "/collections/women" },
-        { label: "Men's Collection", href: "/collections/men" },
-        { label: "View All", href: "/collections" },
-      ]
-    }
+    children: [
+      { label: "Tissue Sarees", href: "/collections/women?cat=tissue" },
+      { label: "Silk Sarees",   href: "/collections/women?cat=silk" },
+      { label: "Fabrics",       href: "/collections/women?cat=fabric" },
+    ],
   },
-  { label: "OUR STORY", href: "/about" },
-  { label: "CONTACT", href: "/contact" },
-  { label: "WISHLIST", href: "/wishlist" },
+  { label: "Bridal",    href: "/collections/women?occ=bridal" },
+  { label: "Festive",   href: "/collections/women?occ=festive" },
+  { label: "Our Story", href: "/about" },
+  { label: "Contact",   href: "/contact" },
+  { label: "Wishlist",  href: "/wishlist" },
 ]
 
 export default function MobileMenu() {
-  const [isOpen, setIsOpen] = useState(false)
-  const [expandedItem, setExpandedItem] = useState<string | null>(null)
-  const menuRef = useRef<HTMLDivElement>(null)
+  const [open, setOpen]         = useState(false)
+  const [expanded, setExpanded] = useState<string | null>(null)
 
-  const toggleMenu = () => {
-    setIsOpen(!isOpen)
-  }
-
-  const toggleSubmenu = (label: string) => {
-    setExpandedItem(expandedItem === label ? null : label)
-  }
-
-  // Close menu when clicking outside
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const menu = document.getElementById('mobile-menu-container')
-      if (menu && !menu.contains(event.target as Node) && isOpen) {
-        setIsOpen(false)
-      }
-    }
-
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [isOpen])
-
-  // Close menu when route changes
-  useEffect(() => {
-    setIsOpen(false)
-    setExpandedItem(null)
-  }, [])
+    document.body.style.overflow = open ? "hidden" : ""
+    return () => { document.body.style.overflow = "" }
+  }, [open])
 
   return (
-    <div className="md:hidden" id="mobile-menu-container">
-      <button 
-        className="p-2 text-foreground hover:text-primary transition-colors" 
-        onClick={toggleMenu}
-        aria-label="Toggle mobile menu"
-        aria-expanded={isOpen}
+    <div className="lg:hidden">
+      <button
+        onClick={() => setOpen(v => !v)}
+        aria-label="Toggle menu"
+        className="w-10 h-10 flex items-center justify-center text-foreground/70 hover:text-foreground transition-colors"
       >
-        {isOpen ? <X size={24} /> : <Menu size={24} />}
+        {open ? <X size={20} strokeWidth={1.5} /> : <Menu size={20} strokeWidth={1.5} />}
       </button>
 
       <AnimatePresence>
-        {isOpen && (
-          <motion.div 
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
-            className="absolute left-0 right-0 top-[80px] bg-white/95 backdrop-blur-sm shadow-lg border-t border-primary/10 z-50"
-          >
-            <nav className="container mx-auto py-6 px-4 flex flex-col gap-1">
-              {menuItems.map((item) => (
-                <div key={item.label} className="border-b border-primary/10 last:border-0">
-                  {item.submenu ? (
-                    <div>
-                      <button 
-                        onClick={() => toggleSubmenu(item.label)}
-                        className="flex w-full items-center justify-between py-4 text-foreground hover:text-primary"
-                      >
-                        <span className="text-base uppercase tracking-wider">{item.label}</span>
-                        {expandedItem === item.label ? 
-                          <ChevronDown size={18} /> : 
-                          <ChevronRight size={18} />
-                        }
-                      </button>
-                      
-                      <AnimatePresence>
-                        {expandedItem === item.label && (
-                          <motion.div
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: "auto", opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            className="overflow-hidden bg-gradient-subtle"
-                          >
-                            <div className="py-2 pl-4 pr-2 space-y-1">
-                              {item.submenu.items.map((subItem) => (
-                                <Link 
-                                  key={subItem.label}
-                                  href={subItem.href}
-                                  className="block py-3 px-2 text-sm text-foreground/80 hover:text-primary"
-                                  onClick={() => setIsOpen(false)}
-                                >
-                                  {subItem.label}
-                                </Link>
-                              ))}
-                            </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  ) : (
-                    <Link 
-                      href={item.href}
-                      className="block py-4 text-base uppercase tracking-wider text-foreground hover:text-primary"
-                      onClick={() => setIsOpen(false)}
-                    >
-                      {item.label}
-                    </Link>
-                  )}
+        {open && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/40 z-40 backdrop-blur-sm"
+              onClick={() => setOpen(false)}
+            />
+            <motion.div
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "tween", duration: 0.28, ease: [0.25, 0.46, 0.45, 0.94] }}
+              className="fixed top-0 right-0 bottom-0 w-[320px] bg-white z-50 flex flex-col shadow-2xl"
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between px-6 h-[68px] border-b border-[hsl(var(--border))]">
+                <div>
+                  <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.1rem", letterSpacing: "0.2em", fontWeight: 300 }} className="uppercase">
+                    Vasthrika
+                  </span>
                 </div>
-              ))}
-              
-              
-              {/* Contact Info */}
-              <div className="mt-6 text-center text-sm text-foreground/70">
-                <p>
-                  <a href="mailto:vasthrikabyvasavi@gmail.com" className="hover:text-primary">vasthrikabyvasavi@gmail.com</a>
-                </p>
+                <button onClick={() => setOpen(false)} className="w-9 h-9 flex items-center justify-center text-foreground/60 hover:text-foreground">
+                  <X size={18} strokeWidth={1.5} />
+                </button>
               </div>
-            </nav>
-          </motion.div>
+
+              {/* Nav */}
+              <nav className="flex-1 overflow-y-auto py-4 px-6">
+                {navItems.map(item => (
+                  <div key={item.label} className="border-b border-[hsl(0_0%_94%)] last:border-0">
+                    {item.children ? (
+                      <>
+                        <button
+                          onClick={() => setExpanded(expanded === item.label ? null : item.label)}
+                          className="flex w-full items-center justify-between py-4 text-sm font-light"
+                        >
+                          {item.label}
+                          <ChevronDown size={14} strokeWidth={1.5} className={`transition-transform ${expanded === item.label ? "rotate-180" : ""}`} />
+                        </button>
+                        <AnimatePresence>
+                          {expanded === item.label && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: "auto", opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{ duration: 0.2 }}
+                              className="overflow-hidden"
+                            >
+                              <div className="pb-3 pl-3 space-y-0.5">
+                                {item.children.map(c => (
+                                  <Link key={c.href} href={c.href} onClick={() => setOpen(false)}
+                                    className="block py-2.5 text-sm font-light text-muted-foreground hover:text-foreground transition-colors">
+                                    {c.label}
+                                  </Link>
+                                ))}
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </>
+                    ) : (
+                      <Link href={item.href} onClick={() => setOpen(false)}
+                        className="flex py-4 text-sm font-light text-foreground hover:text-[hsl(var(--gold))] transition-colors">
+                        {item.label}
+                      </Link>
+                    )}
+                  </div>
+                ))}
+              </nav>
+
+              {/* Footer */}
+              <div className="px-6 py-5 border-t border-[hsl(var(--border))]">
+                <a href="mailto:vasthrikabyvasavi@gmail.com" className="text-xs font-light text-muted-foreground hover:text-foreground transition-colors">
+                  vasthrikabyvasavi@gmail.com
+                </a>
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </div>
