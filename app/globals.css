@@ -201,8 +201,8 @@
    ================================================================ */
 
 .announcement-bar {
-  background: hsl(var(--foreground));
-  color: hsl(var(--background));
+  background: rgb(111, 32, 45);
+  color: #fff;
   font-family: 'Inter', sans-serif;
   font-size: 0.65rem;
   font-weight: 400;

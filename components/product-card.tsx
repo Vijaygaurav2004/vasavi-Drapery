@@ -28,8 +28,10 @@ export default function ProductCard({ product }: Props) {
     : 0
   const effectivePrice = product.discountedPrice ?? product.price
   const stock    = product.stock ?? 12
-  const sold     = Math.floor(Math.random() * 80) + 20
-  const views    = Math.floor(Math.random() * 18) + 5
+  const seed     = [...(product.id ?? product.name ?? "x")].reduce((a, c) => a + c.charCodeAt(0), 0)
+  const sold     = (seed % 80) + 20
+  const views    = (seed % 18) + 5
+  const reviews  = (seed % 40) + 5
   const isLow    = stock <= 5
 
   async function handleAddToCart(e: React.MouseEvent) {
@@ -128,7 +130,7 @@ export default function ProductCard({ product }: Props) {
               className="fill-[hsl(var(--gold))] text-[hsl(var(--gold))]"
             />
           ))}
-          <span className="text-[0.65rem] text-muted-foreground ml-1">({Math.floor(Math.random() * 40) + 5})</span>
+          <span className="text-[0.65rem] text-muted-foreground ml-1">({reviews})</span>
         </div>
 
         {/* Price */}

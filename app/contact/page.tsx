@@ -1,27 +1,21 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
-import { Mail } from "lucide-react"
-
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
+import Link from "next/link"
+import { Mail, Phone, MapPin, Clock, Check, ArrowRight, Send } from "lucide-react"
 import { useToast } from "@/components/ui/use-toast"
 import { submitContactForm } from "@/lib/supabase/contact"
 
+const CONTACT_INFO = [
+  { icon: <Mail size={18} />,  label: "Email",   value: "vasthrikabyvasavi@gmail.com", href: "mailto:vasthrikabyvasavi@gmail.com" },
+  { icon: <Clock size={18} />, label: "Hours",   value: "Mon–Sat · 9 AM – 6 PM IST" },
+  { icon: <MapPin size={18} />, label: "Based in", value: "India · Shipping worldwide" },
+]
+
 export default function ContactPage() {
   const { toast } = useToast()
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    subject: "",
-    message: "",
-  })
-
+  const [formData, setFormData] = useState({ name: "", email: "", subject: "", message: "" })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
@@ -37,170 +31,131 @@ export default function ContactPage() {
     e.preventDefault()
     setIsSubmitting(true)
     setSubmitError(null)
-
     try {
-      // Submit to Supabase
-      const success = await submitContactForm(formData);
-      
+      const success = await submitContactForm(formData)
       if (success) {
-        toast({
-          title: "Message Sent",
-          description: "Thank you for contacting us. We'll get back to you soon!",
-        });
-        
-        // Reset form on success
-        setFormData({
-          name: "",
-          email: "",
-          subject: "",
-          message: "",
-        });
+        toast({ title: "Message Sent", description: "Thank you for contacting us. We'll get back to you soon!" })
+        setFormData({ name: "", email: "", subject: "", message: "" })
         setSubmitted(true)
       } else {
-        throw new Error("Failed to submit form");
+        throw new Error("Failed to submit form")
       }
     } catch (error) {
-      console.error(error);
-      setSubmitError("There was a problem sending your message. Please try again.");
-      toast({
-        title: "Error",
-        description: "There was a problem sending your message. Please try again.",
-        variant: "destructive",
-      });
+      console.error(error)
+      setSubmitError("There was a problem sending your message. Please try again.")
+      toast({ title: "Error", description: "There was a problem sending your message. Please try again.", variant: "destructive" })
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
     }
   }
 
   return (
-    <main className="flex-1 py-16 md:py-24 relative overflow-hidden">
-      <div className="absolute inset-0 silk-pattern opacity-10"></div>
-      <div className="silk-wave absolute inset-0"></div>
-      
-      <div className="container relative z-10">
-        <div className="max-w-2xl mx-auto">
-          <h1 className="text-3xl md:text-4xl font-bold mb-6 text-center elegant-heading silk-text-gradient">
-            Contact Us
-          </h1>
-          <p className="text-muted-foreground text-center mb-12 max-w-xl mx-auto">
-            Have questions about our products or need assistance with your order? We're here to help.
-          </p>
+    <main className="flex-1 bg-background">
+      {/* Hero */}
+      <section className="relative h-[220px] md:h-[280px] overflow-hidden bg-[hsl(var(--charcoal))]">
+        <div className="absolute inset-0" style={{ background: "radial-gradient(circle at 50% 120%, hsl(var(--gold) / 0.18), transparent 60%)" }} />
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center z-10 px-4">
+          <p className="overline text-[hsl(var(--gold-light))] mb-3">We&apos;re Here to Help</p>
+          <h1 className="display-md text-white">Contact Us</h1>
+        </div>
+      </section>
 
-          <div className="mb-12">
-            <Card className="hover-lift">
-              <CardContent className="p-8 flex flex-col items-center text-center">
-                <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                  <Mail className="h-7 w-7 text-primary" />
+      <div className="page-container section-gap-sm">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-10 lg:gap-14">
+
+          {/* Left: info */}
+          <div className="lg:col-span-2">
+            <h2 className="heading-md mb-4">Let&apos;s talk silk</h2>
+            <p className="text-muted-foreground font-light leading-relaxed mb-9 text-sm">
+              Have a question about a saree, your order, or a custom request? Reach out and our team will
+              get back to you within 24 hours.
+            </p>
+
+            <div className="space-y-5">
+              {CONTACT_INFO.map((c) => (
+                <div key={c.label} className="flex items-start gap-4">
+                  <div className="w-11 h-11 flex-shrink-0 flex items-center justify-center" style={{ background: "hsl(var(--cream))", color: "hsl(var(--gold))" }}>
+                    {c.icon}
+                  </div>
+                  <div>
+                    <p className="text-[0.65rem] uppercase tracking-widest text-muted-foreground mb-1">{c.label}</p>
+                    {c.href ? (
+                      <a href={c.href} className="text-sm font-medium hover:text-[hsl(var(--gold))] transition-colors break-all">{c.value}</a>
+                    ) : (
+                      <p className="text-sm font-medium">{c.value}</p>
+                    )}
+                  </div>
                 </div>
-                <h3 className="text-xl font-medium mb-3">Email Us</h3>
-                <p className="text-muted-foreground mb-4">
-                  Send us an email and we&apos;ll get back to you within 24 hours.
-                </p>
-                <a 
-                  href="mailto:vasthrikabyvasavi@gmail.com" 
-                  className="font-medium text-primary hover:text-primary/80 transition-colors"
-                >
-                  vasthrikabyvasavi@gmail.com
-                </a>
-              </CardContent>
-            </Card>
+              ))}
+            </div>
           </div>
 
-          <Card className="shadow-lg decorated-corners border-gradient animate-fade-slide-up">
-            <CardContent className="p-8">
-              <h2 className="text-2xl font-medium mb-8 text-center elegant-heading">Send Us a Message</h2>
-              
+          {/* Right: form */}
+          <div className="lg:col-span-3">
+            <div className="bg-white p-7 md:p-9" style={{ border: "1px solid hsl(var(--border))" }}>
               {submitted ? (
-                <div className="bg-green-50 border border-green-200 rounded-lg p-6 text-center mb-6">
-                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-600">
-                      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                      <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                    </svg>
+                <div className="text-center py-12">
+                  <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-5" style={{ background: "hsl(var(--cream))", color: "hsl(var(--gold))" }}>
+                    <Check size={28} />
                   </div>
-                  <h3 className="text-xl font-medium text-green-800 mb-2">Message Sent Successfully!</h3>
-                  <p className="text-green-700 mb-4">Thank you for contacting us. We'll get back to you soon!</p>
-                  <Button 
-                    onClick={() => setSubmitted(false)} 
-                    className="bg-white border border-green-300 text-green-700 hover:bg-green-50"
-                  >
-                    Send Another Message
-                  </Button>
+                  <h3 className="heading-md mb-3">Message sent successfully</h3>
+                  <p className="text-muted-foreground font-light text-sm mb-7">
+                    Thank you for reaching out. We&apos;ll get back to you shortly.
+                  </p>
+                  <button onClick={() => setSubmitted(false)} className="btn-ghost">Send Another Message</button>
                 </div>
               ) : (
-              <form onSubmit={handleSubmit} className="space-y-6">
-                {submitError && (
-                  <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
-                    <p className="text-red-800 text-sm">{submitError}</p>
-                  </div>
-                )}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="name">Your Name</Label>
-                    <Input 
-                      id="name" 
-                      name="name" 
-                      value={formData.name} 
-                      onChange={handleChange} 
-                      required 
-                      className="glass" 
-                      placeholder="Enter your name"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email Address</Label>
-                    <Input 
-                      id="email" 
-                      name="email" 
-                      type="email" 
-                      value={formData.email} 
-                      onChange={handleChange} 
-                      required 
-                      className="glass" 
-                      placeholder="Enter your email"
-                    />
-                  </div>
-                </div>
+                <form onSubmit={handleSubmit} className="space-y-5">
+                  {submitError && (
+                    <div className="px-4 py-3 text-sm" style={{ background: "hsl(0 70% 97%)", border: "1px solid hsl(0 70% 88%)", color: "hsl(0 65% 40%)" }}>
+                      {submitError}
+                    </div>
+                  )}
 
-                <div className="space-y-2">
-                  <Label htmlFor="subject">Subject</Label>
-                  <Input 
-                    id="subject" 
-                    name="subject" 
-                    value={formData.subject} 
-                    onChange={handleChange} 
-                    required 
-                    className="glass" 
-                    placeholder="What is your message about?"
-                  />
-                </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <div>
+                      <label htmlFor="name" className="form-label mb-2 block">Your Name</label>
+                      <input id="name" name="name" value={formData.name} onChange={handleChange} required
+                        className="form-input" placeholder="Enter your name" />
+                    </div>
+                    <div>
+                      <label htmlFor="email" className="form-label mb-2 block">Email Address</label>
+                      <input id="email" name="email" type="email" value={formData.email} onChange={handleChange} required
+                        className="form-input" placeholder="you@example.com" />
+                    </div>
+                  </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="message">Your Message</Label>
-                  <Textarea
-                    id="message"
-                    name="message"
-                    rows={6}
-                    value={formData.message}
-                    onChange={handleChange}
-                    required
-                    className="glass resize-none"
-                    placeholder="Type your message here..."
-                  />
-                </div>
+                  <div>
+                    <label htmlFor="subject" className="form-label mb-2 block">Subject</label>
+                    <input id="subject" name="subject" value={formData.subject} onChange={handleChange} required
+                      className="form-input" placeholder="What is your message about?" />
+                  </div>
 
-                <div className="pt-4">
-                  <Button type="submit" className="w-full luxury-button py-6" disabled={isSubmitting}>
-                    {isSubmitting ? "Sending..." : "Send Message"}
-                  </Button>
-                </div>
-              </form>
+                  <div>
+                    <label htmlFor="message" className="form-label mb-2 block">Your Message</label>
+                    <textarea id="message" name="message" rows={6} value={formData.message} onChange={handleChange} required
+                      className="form-input resize-none" placeholder="Type your message here..." />
+                  </div>
+
+                  <button type="submit" disabled={isSubmitting} className="btn-primary w-full justify-center gap-2">
+                    {isSubmitting ? "Sending..." : <>Send Message <Send size={14} /></>}
+                  </button>
+                </form>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
+        </div>
+
+        {/* Help link */}
+        <div className="text-center mt-14">
+          <p className="text-sm text-muted-foreground font-light">
+            Looking for something to wear?{" "}
+            <Link href="/collections" className="text-[hsl(var(--gold))] hover:underline inline-flex items-center gap-1">
+              Browse the collection <ArrowRight size={12} />
+            </Link>
+          </p>
         </div>
       </div>
     </main>
   )
 }
-

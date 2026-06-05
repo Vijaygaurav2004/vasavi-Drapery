@@ -10,19 +10,12 @@ import { Product } from "@/types/product"
 import ProductCard from "@/components/product-card"
 
 const CATEGORIES = [
-  { id: "all",      label: "All Sarees" },
-  { id: "silk",     label: "Pure Silk" },
-  { id: "tissue",   label: "Tissue" },
-  { id: "banarasi", label: "Banarasi" },
-  { id: "organza",  label: "Organza" },
-  { id: "fabric",   label: "Fabrics" },
-]
-
-const OCCASIONS = [
-  { id: "bridal",      label: "Bridal" },
-  { id: "festive",     label: "Festive" },
-  { id: "office",      label: "Office" },
-  { id: "traditional", label: "Traditional" },
+  { id: "all",    label: "All Sarees" },
+  { id: "tissue", label: "Tissue Sarees" },
+  { id: "silk",   label: "Silk Sarees" },
+  { id: "bridal", label: "Bridal" },
+  { id: "office", label: "Office" },
+  { id: "fabric", label: "Fabrics" },
 ]
 
 const SORT_OPTIONS = [
@@ -188,22 +181,6 @@ export default function WomensCollectionPage() {
                         }}
                       />
                       {c.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Occasions */}
-              <div>
-                <p className="form-label mb-3">Occasion</p>
-                <div className="space-y-2">
-                  {OCCASIONS.map(o => (
-                    <button
-                      key={o.id}
-                      className="flex items-center gap-2 text-sm font-light w-full text-left py-1 text-muted-foreground hover:text-foreground transition-colors"
-                    >
-                      <span className="w-3 h-3 flex-shrink-0 border border-[hsl(var(--border))]" />
-                      {o.label}
                     </button>
                   ))}
                 </div>

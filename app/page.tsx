@@ -4,8 +4,8 @@ import Link from "next/link"
 import Image from "next/image"
 import { motion } from "framer-motion"
 import {
-  ArrowRight, Star, ShieldCheck, Truck, RefreshCw,
-  Package, Sparkles, Flame, Award
+  ArrowRight, Star, ShieldCheck, Truck,
+  Sparkles, Flame, Award
 } from "lucide-react"
 import FeaturedProducts from "@/components/featured-products"
 import TestimonialCarousel from "@/components/testimonial-carousel"
@@ -33,9 +33,11 @@ const heroSlides = [
 
 /* Collections */
 const collections = [
-  { label: "Tissue Sarees", sub: "Lightweight Luxury",  img: "/1.jpg",          href: "/collections/women?cat=tissue" },
-  { label: "Silk Sarees",   sub: "Kanjivaram & Mysore", img: "/pink-saree.jpg", href: "/collections/women?cat=silk" },
-  { label: "Fabrics",       sub: "Pure Weave by the Metre", img: "/men.jpeg",   href: "/collections/women?cat=fabric" },
+  { label: "Tissue Sarees", sub: "Festive Shimmer",      img: "/1.jpg",          href: "/collections/women?cat=tissue" },
+  { label: "Silk Sarees",   sub: "Pure Kanjivaram",      img: "/pink-saree.jpg", href: "/collections/women?cat=silk" },
+  { label: "Bridal",        sub: "Wedding Masterpieces", img: "/pink-saree.jpg", href: "/collections/women?cat=bridal" },
+  { label: "Office",        sub: "Everyday Elegance",    img: "/1.jpg",          href: "/collections/women?cat=office" },
+  { label: "Fabrics",       sub: "Pure Weave by the Metre", img: "/men.jpeg",    href: "/collections/women?cat=fabric" },
 ]
 
 export default function HomePage() {
@@ -104,9 +106,8 @@ export default function HomePage() {
             >
               {[
                 { icon: <Truck size={13} />,      label: "Free Shipping" },
-                { icon: <Package size={13} />,    label: "COD Available" },
                 { icon: <Sparkles size={13} />,   label: "Premium Silk" },
-                { icon: <RefreshCw size={13} />,  label: "Easy Returns" },
+                { icon: <ShieldCheck size={13} />, label: "Silk Mark Verified" },
               ].map(b => (
                 <div key={b.label} className="flex items-center gap-2">
                   <span className="text-[hsl(var(--gold-light))]">{b.icon}</span>
@@ -138,12 +139,11 @@ export default function HomePage() {
           ══════════════════════════════════════ */}
       <div className="trust-strip">
         <div className="page-container">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-0 md:divide-x divide-[hsl(var(--border))]">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-0 md:divide-x divide-[hsl(var(--border))]">
             {[
-              { icon: <ShieldCheck size={18} />, label: "100% Authentic Silk",   sub: "Certified by GI" },
-              { icon: <Truck size={18} />,       label: "Free Shipping ₹2,000+", sub: "Pan India delivery" },
-              { icon: <Package size={18} />,     label: "COD Available",         sub: "Pay on delivery" },
-              { icon: <RefreshCw size={18} />,   label: "7-Day Returns",         sub: "Hassle-free" },
+              { icon: <ShieldCheck size={18} />, label: "100% Authentic Silk", sub: "Silk Mark certified" },
+              { icon: <Truck size={18} />,       label: "Worldwide Shipping",  sub: "Free across India" },
+              { icon: <Award size={18} />,       label: "Handcrafted Heritage", sub: "Woven by master artisans" },
             ].map(item => (
               <div key={item.label} className="trust-item justify-center md:justify-start md:px-8 py-2">
                 <span className="trust-icon">{item.icon}</span>
@@ -160,11 +160,11 @@ export default function HomePage() {
       {/* ══════════════════════════════════════
           TICKER
           ══════════════════════════════════════ */}
-      <div className="overflow-hidden py-3 bg-[hsl(var(--foreground))]">
+      <div className="overflow-hidden py-3" style={{ background: "rgb(111, 32, 45)" }}>
         <div className="animate-ticker">
           {[...Array(3)].map((_, gi) => (
             <span key={gi} className="flex gap-0">
-              {["Trusted by 50,000+ women", "₹1 Cr+ worth of sarees delivered", "4.9★ average rating", "Silk Mark Verified", "Ships in 24 hours"].map(t => (
+              {["Trusted by 50,000+ women", "₹1 Cr+ worth of sarees delivered", "4.9★ average rating", "Silk Mark Verified", "Worldwide shipping"].map(t => (
                 <span key={t} className="inline-flex items-center gap-4 px-10 text-white/70 text-xs uppercase tracking-widest font-light whitespace-nowrap">
                   <span className="text-[hsl(var(--gold-light))]">✦</span>
                   {t}

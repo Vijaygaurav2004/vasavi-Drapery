@@ -5,8 +5,8 @@ import { X } from "lucide-react"
 import Link from "next/link"
 
 const messages = [
-  "Free shipping on orders above ₹2,000",
-  "COD available across India",
+  "Free shipping across India · International shipping worldwide",
+  "Silk Mark certified pure silk",
   "Use code VASAVI10 for 10% off your first order",
 ]
 

@@ -162,15 +162,15 @@ export default function ProductTabs({ product }: ProductTabsProps) {
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
                 <CheckCircle className="w-5 h-5 text-primary/70 mt-0.5 flex-shrink-0" />
-                <span className="text-foreground/70">Returns accepted within 48 hours of delivery only if the product is damaged or defective.</span>
+                <span className="text-foreground/70">No returns &amp; no exchange. All sales are final.</span>
               </li>
               <li className="flex items-start gap-3">
                 <CheckCircle className="w-5 h-5 text-primary/70 mt-0.5 flex-shrink-0" />
-                <span className="text-foreground/70">The product must be unused, unworn, and in its original packaging with all tags intact.</span>
+                <span className="text-foreground/70">Each saree is quality-checked and carefully packed before dispatch.</span>
               </li>
               <li className="flex items-start gap-3">
                 <CheckCircle className="w-5 h-5 text-primary/70 mt-0.5 flex-shrink-0" />
-                <span className="text-foreground/70">For approved returns, refunds will be processed within 7-10 business days.</span>
+                <span className="text-foreground/70">For damaged or defective items, please contact us within 48 hours of delivery with photos.</span>
               </li>
             </ul>
           </div>

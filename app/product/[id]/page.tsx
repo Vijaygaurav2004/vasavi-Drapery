@@ -6,7 +6,7 @@ import Image from "next/image"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   Minus, Plus, ShoppingBag, Heart, Share2, ChevronRight,
-  Truck, ShieldCheck, RotateCcw, Package, Star, ZoomIn,
+  Truck, ShieldCheck, Star, ZoomIn,
   Check, MapPin, Clock, Eye, Award
 } from "lucide-react"
 import { useToast } from "@/components/ui/use-toast"
@@ -18,9 +18,8 @@ import SilkMarkBadge from "@/components/silk-mark-badge"
 
 const TRUST = [
   { icon: <ShieldCheck size={18} />, label: "100% Authentic",   sub: "GI certified silk" },
-  { icon: <Truck size={18} />,       label: "Free Shipping",    sub: "On orders ₹2000+" },
-  { icon: <RotateCcw size={18} />,   label: "7-Day Returns",    sub: "Hassle-free" },
-  { icon: <Package size={18} />,     label: "COD Available",    sub: "Pay on delivery" },
+  { icon: <Truck size={18} />,       label: "Free Shipping",    sub: "Pan India delivery" },
+  { icon: <Award size={18} />,       label: "Silk Mark Verified", sub: "Govt. of India" },
 ]
 
 export default function ProductPage({ params }: { params: Promise<{ id: string }> }) {
@@ -95,7 +94,7 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
       const deliverable = parseInt(pincode) % 2 === 0
       setPincodeResult(
         deliverable
-          ? `Delivers to ${pincode} in 3–5 business days · COD available`
+          ? `Delivers to ${pincode} in 3–5 business days`
           : `Standard delivery to ${pincode} in 5–7 days`
       )
     }, 500)
@@ -460,10 +459,10 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
               {activeTab === "delivery" && (
                 <div className="space-y-5 text-sm font-light">
                   {[
-                    { label: "Standard Delivery", val: "3–5 business days · Free above ₹2,000" },
-                    { label: "Express Delivery",  val: "1–2 business days · ₹99" },
-                    { label: "COD",               val: "Available across 22,000+ pin codes" },
-                    { label: "Returns",           val: "7-day easy returns on unworn items" },
+                    { label: "Standard Delivery",  val: "3–5 business days · Free shipping pan India" },
+                    { label: "Express Delivery",   val: "1–2 business days · ₹99" },
+                    { label: "Worldwide Shipping", val: "Ships to USA, UK, UAE, Australia & more" },
+                    { label: "Returns",            val: "No returns & no exchange — all sales are final" },
                   ].map(r => (
                     <div key={r.label} className="flex gap-4">
                       <Clock size={16} className="flex-shrink-0 mt-0.5" style={{ color: "hsl(var(--gold))" }} />

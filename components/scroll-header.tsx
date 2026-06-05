@@ -10,15 +10,11 @@ import MobileMenu from "@/app/components/mobile-menu"
 
 const MEGA_MENU = {
   Collections: [
-    { href: "/collections/women?cat=tissue", label: "Tissue Sarees", sub: "Lightweight luxury" },
-    { href: "/collections/women?cat=silk",   label: "Silk Sarees",   sub: "Kanjivaram & Mysore" },
+    { href: "/collections/women?cat=tissue", label: "Tissue Sarees", sub: "Festive shimmer" },
+    { href: "/collections/women?cat=silk",   label: "Silk Sarees",   sub: "Pure Kanjivaram" },
+    { href: "/collections/women?cat=bridal", label: "Bridal",        sub: "Wedding masterpieces" },
+    { href: "/collections/women?cat=office", label: "Office",        sub: "Everyday elegance" },
     { href: "/collections/women?cat=fabric", label: "Fabrics",       sub: "Pure weave by the metre" },
-  ],
-  Occasions: [
-    { href: "/collections/women?occ=bridal",      label: "Bridal",      sub: "Wedding collection" },
-    { href: "/collections/women?occ=festive",     label: "Festive",     sub: "Celebrations" },
-    { href: "/collections/women?occ=traditional", label: "Traditional", sub: "Heritage wear" },
-    { href: "/collections/women?occ=office",      label: "Office",      sub: "Everyday elegance" },
   ],
 }
 
@@ -54,9 +50,11 @@ export default function ScrollHeader() {
           {/* ── Left nav ── */}
           <nav className="hidden lg:flex items-center gap-7 flex-1">
             {Object.keys(MEGA_MENU).map((key) => (
-              <button
+              <Link
                 key={key}
+                href="/collections"
                 onMouseEnter={() => setMegaOpen(key)}
+                onClick={() => setMegaOpen(null)}
                 className={`nav-link flex items-center gap-1 ${megaOpen === key ? "text-foreground" : ""}`}
               >
                 {key}
@@ -65,8 +63,11 @@ export default function ScrollHeader() {
                   strokeWidth={2}
                   className={`transition-transform duration-200 ${megaOpen === key ? "rotate-180" : ""}`}
                 />
-              </button>
+              </Link>
             ))}
+            <Link href="/collections/women" className="nav-link">Shop All</Link>
+            <Link href="/about" className="nav-link">Our Story</Link>
+            <Link href="/contact" className="nav-link">Contact</Link>
           </nav>
 
           {/* ── Logo ── */}
